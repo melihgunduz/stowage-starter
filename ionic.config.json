@@ -1,0 +1,7 @@
+{
+  "name": "stowage-starter",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
