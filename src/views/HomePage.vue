@@ -1,8 +1,47 @@
+<script setup lang="ts">
+    import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+    import {onBeforeMount, ref} from "vue";
+    import {CapacitorSQLite, SQLiteConnection} from "@capacitor-community/sqlite";
+    
+    const database = ref<any>(null);
+    
+    const initDbTable = async () => {
+        try {
+            const CREATE_TABLE =
+                "CREATE TABLE IF NOT EXISTS contacts (" + "id INTEGER PRIMARY KEY NOT NULL,"+"first_name TEXT NOT NULL,"+"last_name TEXT NOT NULL,"+"email TEXT NOT NULL UNIQUE );";
+            const resp = await database.value?.run(CREATE_TABLE)
+            alert('table created')
+            return true;
+        } catch (e) {
+            alert('error initializing the Database Table')
+        }
+    }
+    
+    onBeforeMount(async () => {
+        try {
+            const sqlite = new SQLiteConnection(CapacitorSQLite);
+            const db = await sqlite.createConnection('stowage-db',false,'no-encryption',1,false);
+            await db?.open();
+            await initDbTable();
+            console.log('database opened ')
+			database.value = db
+			alert('no error')
+        } catch (e) {
+            alert('error initializing the Database 1')
+            console.log('error is: ')
+		}
+	});
+	
+    
+    
+    const test = 'Test'
+</script>
+
 <template>
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-title>Test</ion-title>
+        <ion-title>{{ test }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -20,9 +59,7 @@
   </ion-page>
 </template>
 
-<script setup lang="ts">
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
-</script>
+
 
 <style scoped>
 #container {
