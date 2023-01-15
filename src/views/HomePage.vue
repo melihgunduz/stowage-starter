@@ -14,7 +14,7 @@
       </ion-header>
 
       <div id="container">
-        <strong>Let's start!!</strong>
+        <strong>are you alive</strong>
       </div>
     </ion-content>
   </ion-page>
