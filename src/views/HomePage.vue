@@ -5,10 +5,12 @@
     import {square} from "ionicons/icons";
 
     const database = ref<any>(null);
+    const sqlite = new SQLiteConnection(CapacitorSQLite);
 
 
     const initDbTable = async () => {
         try {
+          const isTableExists = await CapacitorSQLite.isTableExists({"table": "contacts"})
             const CREATE_TABLE =
                 "CREATE TABLE IF NOT EXISTS test_table (" + "id INTEGER PRIMARY KEY NOT NULL,"+"first_name TEXT NOT NULL,"+"last_name TEXT NOT NULL,"+"email TEXT NOT NULL UNIQUE );";
             const resp = await database.value?.run(CREATE_TABLE)
@@ -33,21 +35,18 @@
 
     }
 
-        const sqlite = new SQLiteConnection(CapacitorSQLite);
-    const dbConnection = async () => {
 
-        try {
-          const isDbOpen = await CapacitorSQLite.isDBOpen({"database": "stowage-db"})
-          if(isDbOpen){
-            alert("veritabanı açık")
-          }
-        } catch (e){
+    const dbConnection = async () => {
+      const isDbOpen = await sqlite.isConnection("stowage-db",false).then((value) => { return value.result})
+
+      if (isDbOpen){
+          alert("veritabanı açık")
+      }else {
           alert("veritabanı kapalı, açılıyor")
           const db = await sqlite.createConnection('stowage-db',false,'no-encryption',1,false);
           await db.open();
           database.value = db
-          console.log(e)
-        }
+      }
     }
 
 
