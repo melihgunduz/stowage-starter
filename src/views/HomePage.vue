@@ -2,38 +2,58 @@
     import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
     import {onBeforeMount, ref} from "vue";
     import {CapacitorSQLite, SQLiteConnection} from "@capacitor-community/sqlite";
-    
+    import {square} from "ionicons/icons";
+
     const database = ref<any>(null);
-    
+
+
     const initDbTable = async () => {
         try {
             const CREATE_TABLE =
-                "CREATE TABLE IF NOT EXISTS contacts (" + "id INTEGER PRIMARY KEY NOT NULL,"+"first_name TEXT NOT NULL,"+"last_name TEXT NOT NULL,"+"email TEXT NOT NULL UNIQUE );";
+                "CREATE TABLE IF NOT EXISTS test_table (" + "id INTEGER PRIMARY KEY NOT NULL,"+"first_name TEXT NOT NULL,"+"last_name TEXT NOT NULL,"+"email TEXT NOT NULL UNIQUE );";
             const resp = await database.value?.run(CREATE_TABLE)
-            alert('table created')
+            resp();
             return true;
         } catch (e) {
             alert('error initializing the Database Table')
         }
     }
-    
-    onBeforeMount(async () => {
+
+    const addTestUser = async () => {
+      try {
+        const resp = await database.value?.run(
+            "INSERT INTO test_table (first_name,last_name,email)"+"VALUES(?,?,?);",
+            ["Aaron","Saunders","aaron1@gmail.com"]
+        )
+        console.log('user added')
+        return true;
+      } catch (e) {
+        alert('error creating test user')
+      }
+
+    }
+
+        const sqlite = new SQLiteConnection(CapacitorSQLite);
+    const dbConnection = async () => {
+
         try {
-            const sqlite = new SQLiteConnection(CapacitorSQLite);
-            const db = await sqlite.createConnection('stowage-db',false,'no-encryption',1,false);
-            await db?.open();
-            await initDbTable();
-            console.log('database opened ')
-			database.value = db
-			alert('no error')
-        } catch (e) {
-            alert('error initializing the Database 1')
-            console.log('error is: ')
-		}
-	});
-	
-    
-    
+          const isDbOpen = await CapacitorSQLite.isDBOpen({"database": "stowage-db"})
+          if(isDbOpen){
+            alert("veritabanı açık")
+          }
+        } catch (e){
+          alert("veritabanı kapalı, açılıyor")
+          const db = await sqlite.createConnection('stowage-db',false,'no-encryption',1,false);
+          await db.open();
+          database.value = db
+          console.log(e)
+        }
+    }
+
+
+
+
+
     const test = 'Test'
 </script>
 
@@ -53,7 +73,9 @@
       </ion-header>
 
       <div id="container">
-        <strong>are you alive</strong>
+        <ion-button @click="dbConnection"> Connect Database </ion-button>
+        <ion-button @click="initDbTable"> initialize table </ion-button>
+        <ion-button @click="addTestUser"> add user </ion-button>
       </div>
     </ion-content>
   </ion-page>
@@ -64,7 +86,7 @@
 <style scoped>
 #container {
   text-align: center;
-  
+
   position: absolute;
   left: 0;
   right: 0;
@@ -80,9 +102,9 @@
 #container p {
   font-size: 16px;
   line-height: 22px;
-  
+
   color: #8c8c8c;
-  
+
   margin: 0;
 }
 
