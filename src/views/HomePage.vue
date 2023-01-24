@@ -1,57 +1,96 @@
 <script setup lang="ts">
   import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/vue';
-  import {ref} from "vue";
-  import {CapacitorSQLite, SQLiteConnection} from "@capacitor-community/sqlite";
+  import {CapacitorSQLite, SQLiteConnection, SQLiteDBConnection} from "@capacitor-community/sqlite";
 
-  const database = ref<any>(null);
   const sqlite = new SQLiteConnection(CapacitorSQLite);
+  let db: SQLiteDBConnection
 
 
-  const initDbTable = async () => {
+  // console.log( await CapacitorSQLite.getDatabaseList().then((value) => {
+  //   return value.values
+  // }))
+
+
+  const addTestUser = async () => {
     try {
-      const CREATE_TABLE =
-          "CREATE TABLE IF NOT EXISTS first_table (" + "id INTEGER PRIMARY KEY NOT NULL," + "first_name TEXT NOT NULL," + "last_name TEXT NOT NULL," + "email TEXT NOT NULL UNIQUE );";
-      await database.value?.run(CREATE_TABLE)
-      return true;
+      const query = "INSERT INTO test_table (name)\n" +
+          "VALUES\n" +
+          "\t('Melih');"
+      await db.execute(query,false)
+      // await db.run(
+      //     "INSERT INTO test_table (id,name)" + "VALUES(?,?);",
+      //     [8, "melih"]
+      // )
     } catch (e) {
-      alert('error initializing the Database Table')
+      alert('error creating test user')
+      console.log(e)
+    }
+
+  }
+  const getUser = async () => {
+    try {
+      // const query = "SELECT * FROM test_table"
+      // const test = db.run(query).then((value) => {
+      //   return value
+      // })
+      const query = 'SELECT * FROM test_table'
+      const test = await db.query(query)  //use db.query when use SELECT
+      const jso = JSON.stringify(test)
+      const obj = JSON.parse(jso)
+
+      for (let i = 0; i < obj.values.length; i++) {
+        console.log(obj.values[i].name)
+      }
+
+    } catch (e) {
+      alert('error getting test user')
+      console.log(e)
+    }
+
+  }
+
+  const closeConnections = () => {
+    sqlite.closeAllConnections()
+  }
+
+  const dbConnection = async () => {
+    try {
+      const ret = await sqlite.checkConnectionsConsistency();
+      const isConn = (await sqlite.isConnection("db_tab3", false)).result;
+
+      if (ret.result && isConn) {
+        db = await sqlite.retrieveConnection("db_tab3", false);
+      } else {
+        db = await sqlite.createConnection("db_tab3", false, "no-encryption", 1, false);
+      }
+      console.log(`after create/retrieveConnection ${JSON.stringify(db)}`);
+
+      await db.open();
+
+      const query = `
+    CREATE TABLE IF NOT EXISTS test_table (
+      name TEXT
+    );
+    `
+      const res = await db.execute(query);
+      if(res.changes && res.changes.changes && res.changes.changes < 0) {
+         new Error(`Error: execute failed`);
+      }
+
+    } catch (e) {
       console.log(e)
     }
   }
 
-  const addTestUser = async () => {
+  const deleteDb = () => {
     try {
-      const resp = await database.value?.run(
-          "INSERT INTO test_table (first_name,last_name,email)" + "VALUES(?,?,?);",
-          ["Aaron", "Saunders", "aaron1@gmail.com"]
-      )
-      console.log('user added')
-      return true;
+    CapacitorSQLite.deleteDatabase({"database" : "db_tab3"})
     } catch (e) {
-      alert('error creating test user')
-    }
-
-  }
-
-
-  const dbConnection = async () => {
-    const isDbOpen = await sqlite.isConnection("stowage-db", false).then((value) => {
-      return value.result
-    })
-
-    if (isDbOpen) {
-      alert("veritabanı açık")
-    } else {
-      alert("veritabanı kapalı, açılıyor")
-      const db = await sqlite.createConnection('stowage-db', false, 'no-encryption', 1, false);
-      await sqlite.createConnection('stowage-db', false, 'no-encryption', 1, false)
-
-      database.value = db
+      console.log(e)
     }
   }
 
-
-  const test = 'Test'
+  const test = 'Test m'
 </script>
 
 <template>
@@ -71,8 +110,10 @@
 
     <div id="container">
       <ion-button @click="dbConnection"> Connect Database</ion-button>
-      <ion-button @click="initDbTable"> create table</ion-button>
       <ion-button @click="addTestUser"> add user</ion-button>
+      <ion-button @click="getUser"> get user</ion-button>
+      <ion-button @click="closeConnections"> Close Connections</ion-button>
+      <ion-button @click="deleteDb">Delete Db</ion-button>
     </div>
   </ion-content>
 </ion-page>
