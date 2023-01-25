@@ -1,10 +1,8 @@
 <script setup lang="ts">
   import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/vue';
   import {CapacitorSQLite, SQLiteConnection, SQLiteDBConnection} from "@capacitor-community/sqlite";
-  import {onMounted, ref} from "vue";
-  import { useIonRouter } from '@ionic/vue';
+  import { ref} from "vue";
 
-  const router = useIonRouter();
   const sqlite = new SQLiteConnection(CapacitorSQLite);
   let db: SQLiteDBConnection;
   const headTest = ref('Stowage')
