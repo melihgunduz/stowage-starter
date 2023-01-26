@@ -1,30 +1,27 @@
 <script setup >
   import {IonPage, IonButton, IonList, modalController} from "@ionic/vue";
   import {ref} from "vue"
-  import modalControl from '@/components/modalControl.vue'
+  import { useRoute, useRouter } from 'vue-router';
 
 
 
-  const openModal = async () => {
-    const modal = await modalController.create({
-      component:modalControl
-    });
-    await modal.present();
-    const {data, role} = await modal.onWillDismiss()
-
-    if (role === 'confirm') {
-      console.log(data)
-    }
-  }
-
-
+  const $router = useRouter()
   const buttons = ref([
-    {name: 'Tank Ekle'},
-    {name: 'Tank Doldur'},
-    {name: 'Tank Boşalt'},
-    {name: 'Tank Sil'},
-    {name: 'Veritabanını Yeniden Başlat'},
+    {name: 'Tank Ekle', type:'add'},
+    {name: 'Tank Doldur', type:'fill'},
+    {name: 'Tank Boşalt', type:'unload'},
+    {name: 'Tank Sil', type:'delete'},
+    {name: 'Veritabanını Yeniden Başlat', type:'reconnect'},
   ])
+
+  const openActionControl = (val) => {
+    $router.push({
+      name: 'Control',
+      params: {
+        action: val,
+      },
+    });
+  }
 
 </script>
 
@@ -37,25 +34,19 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-content>
-        <ion-button @click="openModal">AÇÇÇ</ion-button>
-      <ion-list lines="none">
-          <ion-button v-for="button in buttons" :key="button" expand="block">
+  <ion-content >
+      <ion-list lines="full">
+          <ion-item :detail="true" button v-for="button in buttons" :key="button" @click="openActionControl(button.type)">
             {{button.name}}
-          </ion-button>
+          </ion-item>
       </ion-list>
-
   </ion-content>
 </ion-page>
 </template>
 
 
 <style scoped>
-ion-list {
-  padding: 0 5px;
-}
-
-ion-list ion-button {
+ion-list ion-item {
   --box-shadow: none;
 }
 </style>

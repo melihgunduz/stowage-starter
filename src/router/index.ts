@@ -2,6 +2,7 @@ import {createRouter, createWebHistory} from '@ionic/vue-router';
 import {RouteRecordRaw} from 'vue-router';
 import HomePage from '../views/HomePage.vue'
 import ManagementPage from "@/views/ManagementPage.vue";
+import actionControl from "@/components/actionControl.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -17,6 +18,11 @@ const routes: Array<RouteRecordRaw> = [
         path: '/manage',
         name: 'Management',
         component: ManagementPage
+    },
+    {
+        path: '/manage/:action/control',
+        name: 'Control',
+        component: actionControl,
     }
 ]
 
