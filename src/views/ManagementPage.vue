@@ -1,7 +1,7 @@
 <script setup >
-  import {IonPage, IonButton, IonList, modalController} from "@ionic/vue";
+  import {IonPage, IonList} from "@ionic/vue";
   import {ref} from "vue"
-  import { useRoute, useRouter } from 'vue-router';
+  import { useRouter } from 'vue-router';
 
 
 

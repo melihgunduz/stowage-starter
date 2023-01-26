@@ -1,6 +1,5 @@
 <script setup lang="ts">
-  import {IonPage, IonHeader,IonToolbar,IonButtons,IonBackButton, IonInput, IonIcon} from "@ionic/vue";
-  import {arrowBack} from "ionicons/icons";
+  import {IonPage, IonHeader,IonToolbar,IonButtons,IonBackButton, IonInput, IonLabel, IonItem,IonList,IonContent} from "@ionic/vue";
   import {useRoute} from "vue-router";
 
 
@@ -24,8 +23,11 @@
   <ion-content class="ion-padding-vertical">
     <ion-list>
       <ion-item>
-        <ion-label position="stacked" >Tank Adını Girin</ion-label>
-        <ion-input class="ion-margin-start" type="text"/>
+        <ion-label >
+          <h4>Tank Adını Girin</h4>
+          <ion-input class="ion-margin-start" type="text"/>
+
+        </ion-label>
       </ion-item>
       <ion-item>
         <ion-input placeholder="Tank Numarasını Girin" type="number"/>
