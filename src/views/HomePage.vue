@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/vue';
+  import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton} from '@ionic/vue';
   import {CapacitorSQLite, SQLiteConnection, SQLiteDBConnection} from "@capacitor-community/sqlite";
   import { ref} from "vue";
 
@@ -11,7 +11,6 @@
   // console.log( await CapacitorSQLite.getDatabaseList().then((value) => {
   //   return value.values
   // }))
-
   const addTestUser = async () => {
     try {
       const query = "INSERT INTO test_table (name)\n" +

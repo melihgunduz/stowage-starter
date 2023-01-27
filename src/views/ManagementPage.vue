@@ -1,5 +1,5 @@
 <script setup >
-  import {IonPage, IonList} from "@ionic/vue";
+  import {IonPage, IonList, IonContent, IonItem,IonHeader,IonToolbar,IonTitle} from "@ionic/vue";
   import {ref} from "vue"
   import { useRouter } from 'vue-router';
 
