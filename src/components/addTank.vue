@@ -1,17 +1,22 @@
 <script setup lang="ts">
-  import {IonPage, IonHeader,IonToolbar,IonButtons,IonButton,IonBackButton, IonInput, IonLabel, IonItem,IonList,IonContent} from "@ionic/vue";
-  import {useRoute} from "vue-router";
-  import {ref} from "vue"
+  import {IonPage, IonHeader,IonToolbar,IonButtons,IonButton,IonBackButton, IonInput, IonLabel, IonItem,IonList,IonContent, IonFooter, IonTitle} from "@ionic/vue";
+  import {onMounted, ref} from "vue"
+  import {SQLiteDBConnection} from "@capacitor-community/sqlite";
+  import {createConn} from '@/helpers/dataBaseConnection'
 
 
-  const $route = useRoute();
-
-  const actionType = ($route.params.action)
+  let db: SQLiteDBConnection;
   const tankProperties = ref({
     name:'',
     number: null,
     parcel: null,
   })
+
+  onMounted(  () => {
+     createConn()
+
+  })
+
 
 </script>
 
@@ -24,7 +29,7 @@
       <ion-buttons slot="start">
         <ion-back-button/>
       </ion-buttons>
-      <ion-title>Back Button</ion-title>
+      <ion-title>Add Tank</ion-title>
     </ion-toolbar>
   </ion-header>
   <ion-content class="ion-padding-vertical">
@@ -44,7 +49,7 @@
     </ion-list>
   </ion-content>
   <ion-footer>
-    <ion-button color="success" expand="block">Ekle</ion-button>
+    <ion-button color="success" expand="block" @click="addThing">Ekle</ion-button>
   </ion-footer>
 </ion-page>
 </template>

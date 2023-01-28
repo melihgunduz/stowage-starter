@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import {IonPage} from "@ionic/vue";
   import {useRoute} from "vue-router";
   import AddTank from "@/components/addTank.vue";
+  import FillTank from "@/components/fillTank.vue";
 
 
   const $route = useRoute();
@@ -12,7 +12,7 @@
 // TODO: 'Tank ekleme tamamlanacak diğer bölümlere geçilecek'
 <template>
   <add-tank v-if="actionType==='add'"/>
-
+  <fill-tank v-else-if="actionType==='fill'"/>
 </template>
 
 
