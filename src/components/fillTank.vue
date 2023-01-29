@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import {IonPage, IonHeader,IonToolbar,IonButtons,IonButton,IonBackButton, IonItem,IonList,IonContent, IonFooter,IonSelect,IonTitle,IonSelectOption} from "@ionic/vue";
+import {IonPage, IonHeader, IonToolbar, IonButtons, IonButton, IonBackButton, IonItem, IonList, IonContent, IonFooter, IonSelect, IonTitle, IonSelectOption, IonRange, IonText, IonCard, IonCardTitle,IonCardHeader,IonCardContent} from "@ionic/vue";
 import {createConn,db} from "@/helpers/dataBaseConnection"
 import {onMounted, ref} from "vue";
 
 
-
-const tanks = ref([{
-  tankName : null,
-  tankNumber : null,
-  parcelNumber : null,
-}])
+  const fullnessofTank = ref(0)
+  const tanks = ref([{
+    tankName : null,
+    tankNumber : null,
+    parcelNumber : null,
+  }])
   const getUser = async () => {
     try {
       const query = 'SELECT * FROM tank_table'
@@ -34,7 +34,9 @@ const tanks = ref([{
     }
   }
 
-
+  const onIonChange = ({detail}:any) => {
+    fullnessofTank.value = detail.value
+  }
 
   onMounted(async () => {
     await createConn()
@@ -53,30 +55,53 @@ const tanks = ref([{
       <ion-title>Fill Tank</ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-content class="ion-padding-vertical">
-    <ion-list lines="none">
-      <ion-item>
-        <ion-select placeholder="Doldurulacak Tankı Seçiniz">
-          <ion-select-option v-for="tank in tanks" :key="tank">{{tank.tankName}}</ion-select-option>
+  <ion-content class="ion-padding">
+    <ion-card class="ion-no-margin" color="secondary">
+      <ion-card-header>
+        <ion-card-title>
+          Doldurulacak Tank
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content class="ion-no-padding ion-padding-vertical">
+        <ion-select class="ion-padding" placeholder="Doldurulacak Tankı Seçiniz">
+          <ion-select-option v-for="tank in tanks" :key="tank" :value="tank">{{tank.tankName}}</ion-select-option>
         </ion-select>
-      </ion-item>
-    </ion-list>
+      </ion-card-content>
+    </ion-card>
+    <ion-card color="medium" class="ion-no-margin ion-margin-top">
+      <ion-card-header>
+        <ion-card-title>
+          Doldurma Miktarı
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-range @ionChange="onIonChange" class="ion-no-padding" :pin="true">
+          <ion-text slot="start">0%</ion-text>
+          <ion-text slot="end">100%</ion-text>
+        </ion-range>
+        <ion-text>Doldurulan: {{fullnessofTank}}%</ion-text>
+      </ion-card-content>
+    </ion-card>
+    <ion-card color="warning" class="ion-no-margin ion-margin-top">
+      <ion-card-header>
+        <ion-card-title>
+          Tank Bilgileri
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-text>İçerik</ion-text>
+      </ion-card-content>
+    </ion-card>
   </ion-content>
   <ion-footer>
-    <ion-button color="success" expand="block">Ekle</ion-button>
+    <ion-button color="success" expand="block">Doldur</ion-button>
   </ion-footer>
 </ion-page>
 </template>
 
 
 <style scoped>
-#container {
-  display: flex;
-  flex-direction: column;
-}
-
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+ion-card {
+  box-shadow: none;
 }
 </style>
