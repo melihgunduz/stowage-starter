@@ -19,7 +19,7 @@
       const query_1 = `INSERT INTO tank_table VALUES('${tankProperties.value.name}',${tankProperties.value.number},${tankProperties.value.parcel})`
       await db.execute(query_1,false)
     } catch (e) {
-      alert('hata')
+      alert('Tank eklenirken hata oluştu')
       console.log(e)
     }
   }

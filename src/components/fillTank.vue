@@ -1,5 +1,29 @@
 <script setup lang="ts">
-  import {IonPage, IonHeader,IonToolbar,IonButtons,IonButton,IonBackButton, IonItem,IonList,IonContent} from "@ionic/vue";
+import {IonPage, IonHeader,IonToolbar,IonButtons,IonButton,IonBackButton, IonItem,IonList,IonContent, IonFooter,IonSelect,IonTitle} from "@ionic/vue";
+import {createConn,db} from "@/helpers/dataBaseConnection"
+import {onMounted} from "vue";
+
+  const getUser = async () => {
+    try {
+      const query = 'SELECT * FROM tank_table'
+      const test = await db.query(query) //use db.query when use SELECT
+      const jso = JSON.stringify(test)
+      const obj = JSON.parse(jso)
+
+      for (let i = 0; i < obj.values.length; i++) {
+        console.log(obj.values[i].tankName)
+      }
+
+    } catch (e) {
+      alert('error getting table')
+      console.log(e)
+    }
+  }
+
+  onMounted(async () => {
+    await createConn()
+    await getUser()
+  })
 
 
 </script>
