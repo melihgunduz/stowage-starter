@@ -1,8 +1,15 @@
 <script setup lang="ts">
-import {IonPage, IonHeader,IonToolbar,IonButtons,IonButton,IonBackButton, IonItem,IonList,IonContent, IonFooter,IonSelect,IonTitle} from "@ionic/vue";
+import {IonPage, IonHeader,IonToolbar,IonButtons,IonButton,IonBackButton, IonItem,IonList,IonContent, IonFooter,IonSelect,IonTitle,IonSelectOption} from "@ionic/vue";
 import {createConn,db} from "@/helpers/dataBaseConnection"
-import {onMounted} from "vue";
+import {onMounted, ref} from "vue";
 
+
+
+const tanks = ref([{
+  tankName : null,
+  tankNumber : null,
+  parcelNumber : null,
+}])
   const getUser = async () => {
     try {
       const query = 'SELECT * FROM tank_table'
@@ -10,8 +17,15 @@ import {onMounted} from "vue";
       const jso = JSON.stringify(test)
       const obj = JSON.parse(jso)
 
-      for (let i = 0; i < obj.values.length; i++) {
-        console.log(obj.values[i].tankName)
+      // for (let i = 0; i < obj.values.length; i++) {
+      //   console.log(obj.values[i].tankName)
+      // }
+
+
+      tanks.value = obj.values
+
+      for (let i = 0; i < tanks.value.length; i++) {
+        console.log(tanks.value[i].tankName)
       }
 
     } catch (e) {
@@ -19,6 +33,8 @@ import {onMounted} from "vue";
       console.log(e)
     }
   }
+
+
 
   onMounted(async () => {
     await createConn()
@@ -40,7 +56,9 @@ import {onMounted} from "vue";
   <ion-content class="ion-padding-vertical">
     <ion-list lines="none">
       <ion-item>
-        <ion-select placeholder="Doldurulacak Tankı Seçiniz"></ion-select>
+        <ion-select placeholder="Doldurulacak Tankı Seçiniz">
+          <ion-select-option v-for="tank in tanks" :key="tank">{{tank.tankName}}</ion-select-option>
+        </ion-select>
       </ion-item>
     </ion-list>
   </ion-content>
