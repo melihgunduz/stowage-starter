@@ -1,21 +1,30 @@
 <script setup lang="ts">
   import {IonPage, IonHeader,IonToolbar,IonButtons,IonButton,IonBackButton, IonInput, IonLabel, IonItem,IonList,IonContent, IonFooter, IonTitle} from "@ionic/vue";
   import {onMounted, ref} from "vue"
-  import {SQLiteDBConnection} from "@capacitor-community/sqlite";
-  import {createConn} from '@/helpers/dataBaseConnection'
+  import {createConn, db} from '@/helpers/dataBaseConnection'
 
 
-  let db: SQLiteDBConnection;
   const tankProperties = ref({
     name:'',
     number: null,
     parcel: null,
   })
 
-  onMounted(  () => {
-     createConn()
+  onMounted(  async () => {
+     await createConn()
+      await add()
 
   })
+
+  const add = async () => {
+    try {
+      const query_1 = `INSERT INTO tank_table VALUES('tank-21',11,2)`
+      await db.execute(query_1,false)
+    } catch (e) {
+      alert('hata')
+      console.log(e)
+    }
+  }
 
 
 </script>
@@ -49,7 +58,7 @@
     </ion-list>
   </ion-content>
   <ion-footer>
-    <ion-button color="success" expand="block" @click="addThing">Ekle</ion-button>
+    <ion-button color="success" expand="block" @click="add">Ekle</ion-button>
   </ion-footer>
 </ion-page>
 </template>

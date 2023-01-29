@@ -1,7 +1,7 @@
     import {CapacitorSQLite, SQLiteConnection, SQLiteDBConnection} from "@capacitor-community/sqlite";
 
     const sqlite = new SQLiteConnection(CapacitorSQLite);
-    let db: SQLiteDBConnection;
+    export let db: SQLiteDBConnection;
 
     export const createConn = async () => {
     try {
@@ -18,9 +18,9 @@
 
         const query = `
      CREATE TABLE IF NOT EXISTS tank_table (
-      tankName TEXT NOT NULL PRIMARY KEY,
-      tankNumber INTEGER NOT NULL UNIQUE,
-      parcelNumber INTEGER NOT NULL
+      tankName TEXT,
+      tankNumber INTEGER,
+      parcelNumber INTEGER
     );
     `
         const res = await db.execute(query);
@@ -29,8 +29,8 @@
         }
 
         //tank ekleme fonksiyonu
-         const query_1 = `INSERT INTO tank_table VALUES('tank-2',4,2)`
-         await db.execute(query_1,false)
+        //  const query_1 = `INSERT INTO tank_table VALUES('tank-2',11,2)`
+        //  await db.execute(query_1,false)
 
     } catch (e) {
         console.log(e)
