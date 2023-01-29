@@ -10,7 +10,7 @@ import {onMounted, ref} from "vue";
     tankNumber : null,
     parcelNumber : null,
   }])
-  const getTanks = async () => {
+  const getUser = async () => {
     try {
       const query = 'SELECT * FROM tank_table'
       const test = await db.query(query) //use db.query when use SELECT
@@ -20,6 +20,8 @@ import {onMounted, ref} from "vue";
       // for (let i = 0; i < obj.values.length; i++) {
       //   console.log(obj.values[i].tankName)
       // }
+
+
       tanks.value = obj.values
 
       for (let i = 0; i < tanks.value.length; i++) {
@@ -38,7 +40,7 @@ import {onMounted, ref} from "vue";
 
   onMounted(async () => {
     await createConn()
-    await getTanks()
+    await getUser()
   })
 
 
@@ -50,18 +52,18 @@ import {onMounted, ref} from "vue";
       <ion-buttons slot="start">
         <ion-back-button/>
       </ion-buttons>
-      <ion-title>Fill Tank</ion-title>
+      <ion-title>Unload Tank</ion-title>
     </ion-toolbar>
   </ion-header>
   <ion-content class="ion-padding">
     <ion-card class="ion-no-margin" color="secondary">
       <ion-card-header>
         <ion-card-title>
-          Doldurulacak Tank
+          Boşaltılacak Tank
         </ion-card-title>
       </ion-card-header>
       <ion-card-content class="ion-no-padding ion-padding-vertical">
-        <ion-select class="ion-padding" placeholder="Doldurulacak Tankı Seçiniz">
+        <ion-select class="ion-padding" placeholder="Boşaltılacak Tankı Seçiniz">
           <ion-select-option v-for="tank in tanks" :key="tank" :value="tank">{{tank.tankName}}</ion-select-option>
         </ion-select>
       </ion-card-content>
@@ -69,7 +71,7 @@ import {onMounted, ref} from "vue";
     <ion-card color="medium" class="ion-no-margin ion-margin-top">
       <ion-card-header>
         <ion-card-title>
-          Doldurma Miktarı
+          Boşaltma Miktarı
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
@@ -77,7 +79,7 @@ import {onMounted, ref} from "vue";
           <ion-text slot="start">0%</ion-text>
           <ion-text slot="end">100%</ion-text>
         </ion-range>
-        <ion-text>Doldurulan: {{fullnessofTank}}%</ion-text>
+        <ion-text>Boşaltılan: {{fullnessofTank}}%</ion-text>
       </ion-card-content>
     </ion-card>
     <ion-card color="warning" class="ion-no-margin ion-margin-top">
@@ -92,7 +94,7 @@ import {onMounted, ref} from "vue";
     </ion-card>
   </ion-content>
   <ion-footer>
-    <ion-button color="success" expand="block">Doldur</ion-button>
+    <ion-button color="success" expand="block">Boşalt</ion-button>
   </ion-footer>
 </ion-page>
 </template>

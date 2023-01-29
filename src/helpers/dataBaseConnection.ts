@@ -11,7 +11,6 @@
         if (ret.result && isConn) {
             db = await sqlite.retrieveConnection("db_tab3", false);
         } else {
-            alert('veritabanı bulunamadı bağlantı oluşturuluyor')
             db = await sqlite.createConnection("db_tab3", false, "no-encryption", 1, false);
         }
         await db.open();
@@ -20,7 +19,11 @@
      CREATE TABLE IF NOT EXISTS tank_table (
       tankName TEXT,
       tankNumber INTEGER,
-      parcelNumber INTEGER
+      parcelNumber INTEGER,
+      cargo TEXT,
+      capacity INTEGER,
+      fullness INTEGER,
+      weight INTEGER
     );
     `
         const res = await db.execute(query);
@@ -33,6 +36,7 @@
         //  await db.execute(query_1,false)
 
     } catch (e) {
+        alert('Veritabanı Hatası')
         console.log(e)
     }
     }

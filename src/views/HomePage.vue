@@ -1,26 +1,5 @@
 <script setup lang="ts">
   import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonText} from '@ionic/vue';
-  // const getUser = async () => {
-  //   try {
-  //     const query = 'SELECT * FROM test_table'
-  //     const test = await db.query(query) //use db.query when use SELECT
-  //     const jso = JSON.stringify(test)
-  //     const obj = JSON.parse(jso)
-  //
-  //     // headTest.value = obj.values[1].name
-  //
-  //     for (let i = 0; i < obj.values.length; i++) {
-  //       console.log(obj.values[i].name)
-  //     }
-  //
-  //   } catch (e) {
-  //     alert('error getting test user')
-  //     console.log(e)
-  //   }
-  //
-  // }
-
-
 
 </script>
 

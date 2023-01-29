@@ -1,27 +1,34 @@
 <script setup lang="ts">
-  import {IonPage, IonHeader,IonToolbar,IonButtons,IonButton,IonBackButton, IonInput, IonLabel, IonItem,IonList,IonContent, IonFooter, IonTitle} from "@ionic/vue";
+  import {IonPage, IonHeader,IonToolbar,IonButtons,IonButton,IonBackButton, IonInput, IonLabel, IonItem,IonList,IonContent, IonFooter, IonTitle, IonCard} from "@ionic/vue";
   import {onMounted, ref} from "vue"
   import {createConn, db} from '@/helpers/dataBaseConnection'
 
 
   const tankProperties = ref({
-    name:'',
+    name: null,
     number: null,
     parcel: null,
+    cargo: null,
+    capacity: NaN,
+    fullness: 100,
   })
 
   onMounted(  async () => {
      await createConn()
   })
 
+  // TODO: Tank ekleme kontrolleri yapılacak
   const add = async () => {
-    try {
-      const query_1 = `INSERT INTO tank_table VALUES('${tankProperties.value.name}',${tankProperties.value.number},${tankProperties.value.parcel})`
-      await db.execute(query_1,false)
-    } catch (e) {
-      alert('Tank eklenirken hata oluştu')
-      console.log(e)
-    }
+      try {
+        const query_1 = `INSERT INTO tank_table VALUES('${tankProperties.value.name}',
+        ${tankProperties.value.number},${tankProperties.value.parcel},'${tankProperties.value.cargo}',
+        ${tankProperties.value.capacity},${tankProperties.value.fullness},${(tankProperties.value.fullness/100)  * tankProperties.value.capacity })`
+        await db.execute(query_1,false)
+      } catch (e) {
+        alert('Tank eklenirken hata oluştu')
+        console.log(e)
+      }
+
   }
 
 
@@ -39,23 +46,34 @@
       <ion-title>Add Tank</ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-content class="ion-padding-vertical">
-    <ion-list>
-      <ion-item>
-        <ion-label position="floating" :color="tankProperties.name !== '' ? 'success' : 'danger'">Tank Adı</ion-label>
-        <ion-input v-model="tankProperties.name" placeholder="Tank Adını Girin"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label :color="tankProperties.number !== null && tankProperties.number !== '' && typeof tankProperties.number!== 'undefined'  ? 'success' : 'danger'" position="floating">Tank Numarası</ion-label>
-        <ion-input v-model="tankProperties.number" placeholder="Tank Numarasını Girin" type="number"/>
-      </ion-item>
-      <ion-item>
-        <ion-label :color="tankProperties.parcel !== null && tankProperties.parcel !== '' && typeof tankProperties.parcel!== 'undefined' ? 'success' : 'danger'" position="floating">Tank Parseli</ion-label>
-        <ion-input v-model="tankProperties.parcel" placeholder="Tank Parselini Girin" type="number"/>
-      </ion-item>
-    </ion-list>
+  <ion-content class="ion-padding">
+    <ion-card class="ion-no-margin">
+      <ion-list>
+        <ion-item>
+          <ion-label position="floating" :color="tankProperties.name !== null || '' ? 'success' : 'danger'">Tank Adı</ion-label>
+          <ion-input :color="tankProperties.name !== null || '' ? 'success' : 'danger'" v-model="tankProperties.name" placeholder="Tank Adını Girin"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label :color="tankProperties.number !== null || '' ? 'success' : 'danger'" position="floating">Tank Numarası</ion-label>
+          <ion-input :color="tankProperties.number !== null || '' ? 'success' : 'danger'" v-model="tankProperties.number" placeholder="Tank Numarasını Girin" type="number"/>
+        </ion-item>
+        <ion-item>
+          <ion-label :color="tankProperties.parcel !== null || '' ? 'success' : 'danger'" position="floating">Tank Parseli</ion-label>
+          <ion-input :color="tankProperties.parcel !== null || '' ? 'success' : 'danger'" v-model="tankProperties.parcel" placeholder="Tank Parselini Girin" type="number"/>
+        </ion-item>
+        <ion-item>
+          <ion-label :color="tankProperties.cargo !== null || '' ? 'success' : 'danger'" position="floating">Yük</ion-label>
+          <ion-input :color="tankProperties.cargo !== null || '' ? 'success' : 'danger'" v-model="tankProperties.cargo" placeholder="Yüklenecek Yükü Yazın" type="text"/>
+        </ion-item>
+        <ion-item>
+          <ion-label :color="tankProperties.capacity !== null || '' && !isNaN(tankProperties.capacity) ? 'success' : 'danger'" position="floating">Kapasite</ion-label>
+          <ion-input :color="tankProperties.capacity !== null || '' && !isNaN(tankProperties.capacity) ? 'success' : 'danger'" v-model="tankProperties.capacity" placeholder="Metreküp cinsinden kapasite girin " type="number"/>
+        </ion-item>
+      </ion-list>
+    </ion-card>
   </ion-content>
-  <ion-footer>
+    <ion-text class="ion-padding">Not: Eklenen tank otomatik olarak 100% dolulukta eklenecektir.</ion-text>
+  <ion-footer class="ion-padding">
     <ion-button color="success" expand="block" @click="add">Ekle</ion-button>
   </ion-footer>
 </ion-page>
@@ -63,13 +81,7 @@
 
 
 <style scoped>
-#container {
-  display: flex;
-  flex-direction: column;
-}
-
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+ion-card {
+  box-shadow: none;
 }
 </style>
