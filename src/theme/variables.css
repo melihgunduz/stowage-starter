@@ -3,6 +3,7 @@ http://ionicframework.com/docs/theming/ */
 
 /** Ionic CSS Variables **/
 :root {
+
     /** primary **/
     --ion-color-primary: #3880ff;
     --ion-color-primary-rgb: 56, 128, 255;
@@ -74,6 +75,38 @@ http://ionicframework.com/docs/theming/ */
     --ion-color-light-contrast-rgb: 0, 0, 0;
     --ion-color-light-shade: #d7d8da;
     --ion-color-light-tint: #f5f6f9;
+
+    /* inputColor */
+    --ion-color-inputColor: #69a8bb;
+    --ion-color-inputColor-rgb: 105, 187, 123;
+    --ion-color-inputColor-contrast: #ffffff;
+    --ion-color-inputColor-contrast-rgb: 255, 255, 255;
+    --ion-color-inputColor-shade: #5ca56c;
+    --ion-color-inputColor-tint: #78c288;
+    /* note */
+    --ion-color-note: #51b858;
+    --ion-color-note-rgb: 81,184,88;
+    --ion-color-note-contrast: #000000;
+    --ion-color-note-contrast-rgb: 0,0,0;
+    --ion-color-note-shade: #47a24d;
+    --ion-color-note-tint: #62bf69;
+}
+
+.ion-color-inputColor {
+    --ion-color-base: var(--ion-color-inputColor);
+    --ion-color-base-rgb: var(--ion-color-inputColor-rgb);
+    --ion-color-contrast: var(--ion-color-inputColor-contrast);
+    --ion-color-contrast-rgb: var(--ion-color-inputColor-contrast-rgb);
+    --ion-color-shade: var(--ion-color-inputColor-shade);
+    --ion-color-tint: var(--ion-color-inputColor-tint);
+}
+.ion-color-note {
+    --ion-color-base: var(--ion-color-note);
+    --ion-color-base-rgb: var(--ion-color-note-rgb);
+    --ion-color-contrast: var(--ion-color-note-contrast);
+    --ion-color-contrast-rgb: var(--ion-color-note-contrast-rgb);
+    --ion-color-shade: var(--ion-color-note-shade);
+    --ion-color-tint: var(--ion-color-note-tint);
 }
 
 @media (prefers-color-scheme: dark) {
