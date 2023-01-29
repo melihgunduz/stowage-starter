@@ -12,13 +12,11 @@
 
   onMounted(  async () => {
      await createConn()
-      await add()
-
   })
 
   const add = async () => {
     try {
-      const query_1 = `INSERT INTO tank_table VALUES('tank-21',11,2)`
+      const query_1 = `INSERT INTO tank_table VALUES('${tankProperties.value.name}',${tankProperties.value.number},${tankProperties.value.parcel})`
       await db.execute(query_1,false)
     } catch (e) {
       alert('hata')
