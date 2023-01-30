@@ -1,7 +1,8 @@
 <script setup lang="ts">
-  import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle, IonGrid, IonRow, IonCol, IonText, IonLabel} from '@ionic/vue';
+  import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle, IonGrid, IonRow, IonCol, IonText, IonLabel,IonIcon} from '@ionic/vue';
   import {onMounted, ref} from "vue";
   import {createConn, db} from "@/helpers/dataBaseConnection";
+  import {refreshCircleOutline} from "ionicons/icons";
 
 
   const tanks = ref([{
@@ -45,7 +46,13 @@
   <ion-header :translucent="true">
     <ion-toolbar>
       <ion-title>Home Page</ion-title>
+      <ion-buttons slot="end">
+        <ion-button @click="getTanks">
+          <ion-icon slot="icon-only" :icon="refreshCircleOutline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
     </ion-toolbar>
+
   </ion-header>
 
   <ion-content v-if="tanks.length > 0">
