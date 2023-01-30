@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {IonPage, IonHeader, IonToolbar, IonButtons, IonButton, IonBackButton, IonContent, IonFooter, IonSelect, IonTitle, IonSelectOption, IonRange, IonText, IonCard, IonCardTitle,IonCardHeader,IonCardContent} from "@ionic/vue";
 import {createConn,db} from "@/helpers/dataBaseConnection"
-import {onMounted, ref, watch} from "vue";
+import {onMounted, ref} from "vue";
 
 
   const fullnessOfTank = ref(0)
@@ -25,7 +25,7 @@ import {onMounted, ref, watch} from "vue";
     fullness: NaN,
     weight:NaN
   })
-  const getUser = async () => {
+  const getTanks = async () => {
     try {
       const query = 'SELECT * FROM tank_table'
       const test = await db.query(query) //use db.query when use SELECT
@@ -61,7 +61,7 @@ import {onMounted, ref, watch} from "vue";
 
   onMounted(async () => {
     await createConn()
-    await getUser()
+    await getTanks()
   })
 
 
@@ -95,28 +95,14 @@ import {onMounted, ref, watch} from "vue";
           Tank Bilgileri
         </ion-card-title>
       </ion-card-header>
-      <ion-card-content class="ion-wrap" v-if="selectedTank.tankName !==null || ''">
-        <ion-row>
+      <ion-card-content v-if="selectedTank.tankName !==null || ''">
           <ion-text>Tank Adı: {{ selectedTank.tankName }}</ion-text>
-        </ion-row>
-        <ion-row>
           <ion-text>Tank Numarası: {{ selectedTank.tankNumber }}</ion-text>
-        </ion-row>
-        <ion-row>
           <ion-text>Parsel Numarası: {{ selectedTank.parcelNumber }}</ion-text>
-        </ion-row>
-        <ion-row>
           <ion-text>Yük: {{ selectedTank.cargo }}</ion-text>
-        </ion-row>
-        <ion-row>
           <ion-text>Kapasite: {{ selectedTank.capacity }} m3</ion-text>
-        </ion-row>
-        <ion-row>
           <ion-text>Doluluk: {{ selectedTank.fullness }}</ion-text>
-        </ion-row>
-        <ion-row>
-          <ion-text>Ağırlık: {{ selectedTank.weight }}</ion-text>
-        </ion-row>
+          <ion-text>Ağırlık: {{ selectedTank.weight }} kg</ion-text>
       </ion-card-content>
       <ion-card-content v-else>
         <ion-text>Tank bilgisi için tank seçimi yapın</ion-text>
@@ -147,6 +133,11 @@ import {onMounted, ref, watch} from "vue";
 <style scoped>
 ion-card {
   box-shadow: none;
+}
+
+ion-card-content {
+  display: flex;
+  flex-direction: column;
 }
 
 ion-select {

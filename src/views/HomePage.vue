@@ -1,5 +1,42 @@
 <script setup lang="ts">
-  import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonText} from '@ionic/vue';
+  import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle, IonGrid, IonRow, IonCol, IonText, IonLabel} from '@ionic/vue';
+  import {onMounted, ref} from "vue";
+  import {createConn, db} from "@/helpers/dataBaseConnection";
+
+
+  const tanks = ref([{
+    tankName : null,
+    tankNumber : null,
+    parcelNumber : null,
+    cargo: null,
+    capacity: NaN,
+    fullness: NaN,
+    weight:NaN
+  }])
+  const getTanks = async () => {
+    try {
+      const query = 'SELECT * FROM tank_table'
+      const test = await db.query(query) //use db.query when use SELECT
+      const jso = JSON.stringify(test)
+      const obj = JSON.parse(jso)
+
+
+      tanks.value = obj.values
+
+      // for (let i = 0; i < tanks.value.length; i++) {
+      //   console.log(tanks.value[i].tankName)
+      // }
+
+    } catch (e) {
+      alert('error getting table')
+      console.log(e)
+    }
+  }
+
+  onMounted(async () => {
+    await createConn()
+    await getTanks()
+  })
 
 </script>
 
@@ -11,10 +48,39 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-content>
+  <ion-content v-if="tanks.length > 0">
+    <ion-grid :fixed="true">
+      <ion-row>
+        <ion-col v-for="tank in tanks" :key="tank" size="6">
+          <ion-card color="primary" class="ion-padding-vertical">
+            <ion-card-header class="ion-no-padding ion-padding-horizontal">
+              <ion-card-title>
+                Tank No: {{ tank.tankNumber }}
+              </ion-card-title>
+              <ion-card-subtitle>
+               Tank Adı: {{ tank.tankName }}
+              </ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content class="ion-padding-horizontal">
+              <ion-label>
+                Yük: {{ tank.cargo }}
+              </ion-label>
+              <ion-label>
+                Doluluk: {{ tank.fullness }}
+              </ion-label>
+              <ion-label>
+                Ağırlık: {{ tank.weight }} kg
+              </ion-label>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-content>
+  <ion-content v-else>
     <div id="container">
       <ion-text>
-        Home Page
+        Veritabanında Kayıtlı Tank Bulunamadı
       </ion-text>
     </div>
   </ion-content>
@@ -23,29 +89,16 @@
 
 
 <style scoped>
+ion-card-content {
+  display: flex;
+  flex-direction: column;
+}
+
 #container {
   text-align: center;
   position: absolute;
   left: 0;
   right: 0;
   top: 50%;
-}
-
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
-
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
 }
 </style>

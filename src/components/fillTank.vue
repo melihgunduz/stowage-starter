@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import {IonPage, IonHeader, IonToolbar, IonButtons, IonButton, IonBackButton, IonContent, IonFooter, IonSelect, IonTitle, IonSelectOption, IonRange, IonText, IonCard, IonCardTitle,IonCardHeader,IonCardContent} from "@ionic/vue";
-import {createConn,db} from "@/helpers/dataBaseConnection"
-import {onMounted, ref} from "vue";
+  import {IonPage, IonHeader, IonToolbar, IonButtons, IonButton, IonBackButton, IonContent, IonFooter, IonSelect, IonTitle, IonSelectOption, IonRange, IonText, IonCard, IonCardTitle,IonCardHeader,IonCardContent} from "@ionic/vue";
+  import {createConn,db} from "@/helpers/dataBaseConnection"
+  import {onMounted, ref} from "vue";
 
 
-  const fullnessofTank = ref(0)
+  const fullnessOfTank = ref(0)
+
   const tanks = ref([{
     tankName : null,
     tankNumber : null,
@@ -14,17 +15,25 @@ import {onMounted, ref} from "vue";
     fullness: NaN,
     weight:NaN
   }])
+
+  const selectedTank = ref({
+    tankName : null,
+    tankNumber : null,
+    parcelNumber : null,
+    cargo: null,
+    capacity: NaN,
+    fullness: NaN,
+    weight:NaN
+  })
   const getTanks = async () => {
     try {
       const query = 'SELECT * FROM tank_table'
-      const data = await db.query(query) //use db.query when use SELECT
-      const strData = JSON.stringify(data)
-      const objData = JSON.parse(strData)
+      const test = await db.query(query) //use db.query when use SELECT
+      const jso = JSON.stringify(test)
+      const obj = JSON.parse(jso)
 
-      // for (let i = 0; i < obj.values.length; i++) {
-      //   console.log(obj.values[i].tankName)
-      // }
-      tanks.value = objData.values
+
+      tanks.value = obj.values
 
       // for (let i = 0; i < tanks.value.length; i++) {
       //   console.log(tanks.value[i].tankName)
@@ -37,8 +46,18 @@ import {onMounted, ref} from "vue";
   }
 
   const onIonChange = ({detail}:any) => {
-    fullnessofTank.value = detail.value
+    fullnessOfTank.value = detail.value
   }
+
+
+  const changed = ({detail}:any) => {
+    selectedTank.value = detail.value
+    const str = JSON.stringify(selectedTank.value)
+    const obj = JSON.parse(str)
+    console.log(obj.tankName)
+
+  }
+
 
   onMounted(async () => {
     await createConn()
@@ -54,20 +73,39 @@ import {onMounted, ref} from "vue";
       <ion-buttons slot="start">
         <ion-back-button/>
       </ion-buttons>
-      <ion-title>Fill Tank</ion-title>
+      <ion-title>Load Tank</ion-title>
     </ion-toolbar>
   </ion-header>
   <ion-content class="ion-padding">
-    <ion-card class="ion-no-margin" color="secondary">
+    <ion-card class="ion-no-margin" color="select_box">
       <ion-card-header>
         <ion-card-title>
           Doldurulacak Tank
         </ion-card-title>
       </ion-card-header>
       <ion-card-content class="ion-no-padding ion-padding-vertical">
-        <ion-select interface="popover" class="ion-padding" placeholder="Doldurulacak Tankı Seçiniz">
+        <ion-select @ionChange="changed" ok-text="Tank Seç" cancel-text="İptal" class="ion-padding" placeholder="Doldurulacak Tankı Seçiniz">
           <ion-select-option v-for="tank in tanks" :key="tank" :value="tank">{{tank.tankName}}</ion-select-option>
         </ion-select>
+      </ion-card-content>
+    </ion-card>
+    <ion-card color="tank_info_box" class="ion-no-margin ion-margin-top">
+      <ion-card-header>
+        <ion-card-title>
+          Tank Bilgileri
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content class="ion-wrap" v-if="selectedTank.tankName !==null || ''">
+          <ion-text>Tank Adı: {{ selectedTank.tankName }}</ion-text>
+          <ion-text>Tank Numarası: {{ selectedTank.tankNumber }}</ion-text>
+          <ion-text>Parsel Numarası: {{ selectedTank.parcelNumber }}</ion-text>
+          <ion-text>Yük: {{ selectedTank.cargo }}</ion-text>
+          <ion-text>Kapasite: {{ selectedTank.capacity }} m3</ion-text>
+          <ion-text>Doluluk: {{ selectedTank.fullness }} kg</ion-text>
+          <ion-text>Ağırlık: {{ selectedTank.weight }}</ion-text>
+      </ion-card-content>
+      <ion-card-content v-else>
+        <ion-text>Tank bilgisi için tank seçimi yapın</ion-text>
       </ion-card-content>
     </ion-card>
     <ion-card color="medium" class="ion-no-margin ion-margin-top">
@@ -81,21 +119,11 @@ import {onMounted, ref} from "vue";
           <ion-text slot="start">0%</ion-text>
           <ion-text slot="end">100%</ion-text>
         </ion-range>
-        <ion-text>Doldurulan: {{fullnessofTank}}%</ion-text>
-      </ion-card-content>
-    </ion-card>
-    <ion-card color="warning" class="ion-no-margin ion-margin-top">
-      <ion-card-header>
-        <ion-card-title>
-          Tank Bilgileri
-        </ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-text>İçerik</ion-text>
+        <ion-text>Doldurulan: {{fullnessOfTank}}%</ion-text>
       </ion-card-content>
     </ion-card>
   </ion-content>
-  <ion-footer class="ion-padding">
+  <ion-footer class="ion-padding ion-no-border">
     <ion-button color="success" expand="block">Doldur</ion-button>
   </ion-footer>
 </ion-page>
@@ -105,5 +133,15 @@ import {onMounted, ref} from "vue";
 <style scoped>
 ion-card {
   box-shadow: none;
+}
+
+ion-card-content {
+  display: flex;
+  flex-direction: column;
+}
+
+ion-select {
+  --placeholder-color: black;
+  --placeholder-opacity: 80%;
 }
 </style>
