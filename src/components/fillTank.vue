@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {IonPage, IonHeader, IonToolbar, IonButtons, IonButton, IonBackButton, IonItem, IonList, IonContent, IonFooter, IonSelect, IonTitle, IonSelectOption, IonRange, IonText, IonCard, IonCardTitle,IonCardHeader,IonCardContent} from "@ionic/vue";
+import {IonPage, IonHeader, IonToolbar, IonButtons, IonButton, IonBackButton, IonContent, IonFooter, IonSelect, IonTitle, IonSelectOption, IonRange, IonText, IonCard, IonCardTitle,IonCardHeader,IonCardContent} from "@ionic/vue";
 import {createConn,db} from "@/helpers/dataBaseConnection"
 import {onMounted, ref} from "vue";
 
@@ -9,22 +9,26 @@ import {onMounted, ref} from "vue";
     tankName : null,
     tankNumber : null,
     parcelNumber : null,
+    cargo: null,
+    capacity: NaN,
+    fullness: NaN,
+    weight:NaN
   }])
   const getTanks = async () => {
     try {
       const query = 'SELECT * FROM tank_table'
-      const test = await db.query(query) //use db.query when use SELECT
-      const jso = JSON.stringify(test)
-      const obj = JSON.parse(jso)
+      const data = await db.query(query) //use db.query when use SELECT
+      const strData = JSON.stringify(data)
+      const objData = JSON.parse(strData)
 
       // for (let i = 0; i < obj.values.length; i++) {
       //   console.log(obj.values[i].tankName)
       // }
-      tanks.value = obj.values
+      tanks.value = objData.values
 
-      for (let i = 0; i < tanks.value.length; i++) {
-        console.log(tanks.value[i].tankName)
-      }
+      // for (let i = 0; i < tanks.value.length; i++) {
+      //   console.log(tanks.value[i].tankName)
+      // }
 
     } catch (e) {
       alert('error getting table')
@@ -61,7 +65,7 @@ import {onMounted, ref} from "vue";
         </ion-card-title>
       </ion-card-header>
       <ion-card-content class="ion-no-padding ion-padding-vertical">
-        <ion-select class="ion-padding" placeholder="Doldurulacak Tankı Seçiniz">
+        <ion-select interface="popover" class="ion-padding" placeholder="Doldurulacak Tankı Seçiniz">
           <ion-select-option v-for="tank in tanks" :key="tank" :value="tank">{{tank.tankName}}</ion-select-option>
         </ion-select>
       </ion-card-content>
@@ -91,7 +95,7 @@ import {onMounted, ref} from "vue";
       </ion-card-content>
     </ion-card>
   </ion-content>
-  <ion-footer>
+  <ion-footer class="ion-padding">
     <ion-button color="success" expand="block">Doldur</ion-button>
   </ion-footer>
 </ion-page>
