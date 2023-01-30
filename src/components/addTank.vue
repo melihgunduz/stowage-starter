@@ -2,7 +2,10 @@
   import {IonPage, IonHeader,IonToolbar,IonButtons,IonButton,IonBackButton, IonInput, IonLabel, IonItem,IonList,IonContent, IonFooter, IonTitle, IonCard, IonText} from "@ionic/vue";
   import {onMounted, ref} from "vue"
   import {createConn, db} from '@/helpers/dataBaseConnection'
+  import {useRouter} from "vue-router";
 
+
+  const $router = useRouter()
 
   const tankProperties = ref({
     name: null,
@@ -24,11 +27,11 @@
         ${tankProperties.value.number},${tankProperties.value.parcel},'${tankProperties.value.cargo}',
         ${tankProperties.value.capacity},${tankProperties.value.fullness},${(tankProperties.value.fullness/100)  * tankProperties.value.capacity })`
         await db.execute(query_1,false)
+        await $router.push({name: 'Management'})
       } catch (e) {
         alert('Tank eklenirken hata oluştu')
         console.log(e)
       }
-
   }
 
 

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-  import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle, IonGrid, IonRow, IonCol, IonText, IonLabel,IonIcon} from '@ionic/vue';
+  import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle, IonGrid, IonRow, IonCol, IonText, IonLabel, IonIcon, IonRefresher, IonRefresherContent} from '@ionic/vue';
   import {onMounted, ref} from "vue";
   import {createConn, db} from "@/helpers/dataBaseConnection";
   import {refreshCircleOutline} from "ionicons/icons";
 
 
+  const refreshActive= ref(true)
   const tanks = ref([{
     tankName : null,
     tankNumber : null,
@@ -14,19 +15,22 @@
     fullness: NaN,
     weight:NaN
   }])
-  const getTanks = async () => {
+  const getTanks = async (refresh:boolean) => {
+
+    if (refresh) {
+      refreshActive.value = false
+    }
+
     try {
       const query = 'SELECT * FROM tank_table'
       const test = await db.query(query) //use db.query when use SELECT
       const jso = JSON.stringify(test)
       const obj = JSON.parse(jso)
-
-
       tanks.value = obj.values
-
       // for (let i = 0; i < tanks.value.length; i++) {
       //   console.log(tanks.value[i].tankName)
       // }
+
 
     } catch (e) {
       alert('error getting table')
@@ -34,9 +38,18 @@
     }
   }
 
+  const pullToRefresh = async (event:any) => {
+    await getTanks(true).then(() => {
+      event.target.complete()
+      refreshActive.value = true
+    })
+
+  }
+
+
   onMounted(async () => {
     await createConn()
-    await getTanks()
+    await getTanks(false)
   })
 
 </script>
@@ -47,7 +60,7 @@
     <ion-toolbar>
       <ion-title>Home Page</ion-title>
       <ion-buttons slot="end">
-        <ion-button @click="getTanks">
+        <ion-button :disabled="!refreshActive" @click="getTanks(true).then(() => refreshActive = true)">
           <ion-icon slot="icon-only" :icon="refreshCircleOutline"></ion-icon>
         </ion-button>
       </ion-buttons>
@@ -56,6 +69,12 @@
   </ion-header>
 
   <ion-content v-if="tanks.length > 0">
+    <ion-refresher slot="fixed" @ionRefresh="pullToRefresh($event)" >
+      <ion-refresher-content
+          refreshing-spinner="circles"
+          refreshing-text="Refreshing...">
+      </ion-refresher-content>
+    </ion-refresher>
     <ion-grid :fixed="true">
       <ion-row>
         <ion-col v-for="tank in tanks" :key="tank" size="6">

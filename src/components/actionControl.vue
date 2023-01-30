@@ -10,7 +10,6 @@
 
 </script>
 
-// TODO: 'Tank ekleme tamamlanacak diğer bölümlere geçilecek'
 <template>
   <add-tank v-if="actionType==='add'"/>
   <fill-tank v-else-if="actionType==='fill'"/>
