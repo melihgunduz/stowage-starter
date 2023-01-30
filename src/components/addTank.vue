@@ -1,11 +1,78 @@
 <script setup lang="ts">
-  import {IonPage, IonHeader,IonToolbar,IonButtons,IonButton,IonBackButton, IonInput, IonLabel, IonItem,IonList,IonContent, IonFooter, IonTitle, IonCard, IonText} from "@ionic/vue";
+  import {
+    IonPage,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonButton,
+    IonBackButton,
+    IonInput,
+    IonLabel,
+    IonItem,
+    IonList,
+    IonContent,
+    IonFooter,
+    IonTitle,
+    IonCard,
+    IonText,
+    alertController, toastController
+  } from "@ionic/vue";
   import {onMounted, ref} from "vue"
   import {createConn, db} from '@/helpers/dataBaseConnection'
   import {useRouter} from "vue-router";
 
 
   const $router = useRouter()
+
+  const presentAlert = async () => {
+    const alert = await alertController.create({
+      header: 'Hata',
+      buttons: ['Tamam'],
+      message: 'Aynı isime veya numaraya sahip tank bulunmaktadır.\n' +
+          'Lütfen yeni bir isim veya numara girin'
+
+    });
+
+    await alert.present();
+  };
+
+  const presentToast = async () => {
+    const toast = await toastController.create({
+      message: 'Tank Oluşturuldu',
+      duration: 1500,
+      position: "top"
+    });
+
+    await toast.present();
+  }
+
+
+  const tanks = ref([{
+    tankName : null,
+    tankNumber : null,
+    parcelNumber : null,
+    cargo: null,
+    capacity: NaN,
+    fullness: NaN,
+    weight:NaN
+  }])
+  const getTanks = async () => {
+    try {
+      const query = 'SELECT * FROM tank_table'
+      const test = await db.query(query) //use db.query when use SELECT
+      const jso = JSON.stringify(test)
+      const obj = JSON.parse(jso)
+      tanks.value = obj.values
+
+      // for (let i = 0; i < tanks.value.length; i++) {
+      //   console.log(tanks.value[i].tankName)
+      // }
+
+    } catch (e) {
+      alert('error getting table')
+      console.log(e)
+    }
+  }
 
   const tankProperties = ref({
     name: null,
@@ -18,20 +85,54 @@
 
   onMounted(  async () => {
      await createConn()
+     await getTanks()
   })
 
-  // TODO: Tank ekleme kontrolleri yapılacak
   const add = async () => {
+    if (tanks.value.length === 0) {
       try {
         const query_1 = `INSERT INTO tank_table VALUES('${tankProperties.value.name}',
         ${tankProperties.value.number},${tankProperties.value.parcel},'${tankProperties.value.cargo}',
-        ${tankProperties.value.capacity},${tankProperties.value.fullness},${(tankProperties.value.fullness/100)  * tankProperties.value.capacity })`
+        ${tankProperties.value.capacity},${tankProperties.value.fullness},
+        ${(tankProperties.value.fullness/100)  * tankProperties.value.capacity })`
+
         await db.execute(query_1,false)
+        await presentToast();
         await $router.push({name: 'Management'})
+        return true
+
       } catch (e) {
         alert('Tank eklenirken hata oluştu')
         console.log(e)
       }
+    } else {
+      for (let i = 0; i < tanks.value.length; i++){
+        if (tanks.value[i].tankName === tankProperties.value.name) {
+          await presentAlert()
+          console.log(tanks.value[i].tankNumber,' ', tankProperties.value.number)
+          return false
+        } else {
+          try {
+            const query_1 = `INSERT INTO tank_table VALUES('${tankProperties.value.name}',
+        ${tankProperties.value.number},${tankProperties.value.parcel},'${tankProperties.value.cargo}',
+        ${tankProperties.value.capacity},${tankProperties.value.fullness},
+        ${(tankProperties.value.fullness/100)  * tankProperties.value.capacity })`
+
+            await db.execute(query_1,false)
+            await presentToast();
+            await $router.push({name: 'Management'})
+            return true
+
+          } catch (e) {
+            alert('Tank eklenirken hata oluştu')
+            console.log(e)
+          }
+        }
+      }
+
+    }
+
+
   }
 
 
