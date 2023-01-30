@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle, IonGrid, IonRow, IonCol, IonText, IonLabel, IonIcon, IonRefresher, IonRefresherContent} from '@ionic/vue';
+  import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle, IonGrid, IonRow, IonCol, IonText, IonLabel, IonIcon, IonRefresher, IonRefresherContent, IonButtons, IonButton} from '@ionic/vue';
   import {onMounted, ref} from "vue";
   import {createConn, db} from "@/helpers/dataBaseConnection";
   import {refreshCircleOutline} from "ionicons/icons";
@@ -38,7 +38,7 @@
     }
   }
 
-  const pullToRefresh = async (event:any) => {
+  const refreshData = async (event:any) => {
     await getTanks(true).then(() => {
       event.target.complete()
       refreshActive.value = true
@@ -69,7 +69,7 @@
   </ion-header>
 
   <ion-content v-if="tanks.length > 0">
-    <ion-refresher slot="fixed" @ionRefresh="pullToRefresh($event)" >
+    <ion-refresher slot="fixed" @ionRefresh="refreshData($event)" >
       <ion-refresher-content
           refreshing-spinner="circles"
           refreshing-text="Refreshing...">
