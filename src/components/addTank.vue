@@ -56,6 +56,7 @@
     fullness: NaN,
     weight:NaN
   }])
+
   const getTanks = async () => {
     try {
       const query = 'SELECT * FROM tank_table'
@@ -64,15 +65,14 @@
       const obj = JSON.parse(jso)
       tanks.value = obj.values
 
-      // for (let i = 0; i < tanks.value.length; i++) {
-      //   console.log(tanks.value[i].tankName)
-      // }
-
     } catch (e) {
       alert('error getting table')
       console.log(e)
     }
   }
+
+
+
 
   const tankProperties = ref({
     name: null,
@@ -107,9 +107,8 @@
       }
     } else {
       for (let i = 0; i < tanks.value.length; i++){
-        if (tanks.value[i].tankName === tankProperties.value.name) {
+        if (tanks.value[i].tankName === tankProperties.value.name || tanks.value[i].tankNumber === tankProperties.value.number) {
           await presentAlert()
-          console.log(tanks.value[i].tankNumber,' ', tankProperties.value.number)
           return false
         } else {
           try {
@@ -128,6 +127,7 @@
             console.log(e)
           }
         }
+        console.log(tanks.value[i])
       }
 
     }

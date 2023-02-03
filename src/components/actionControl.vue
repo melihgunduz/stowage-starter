@@ -8,6 +8,7 @@
   const $route = useRoute();
   const actionType = ($route.params.action)
 
+
 </script>
 
 <template>

@@ -1,10 +1,9 @@
 <script setup lang="ts">
-  import {IonApp} from '@ionic/vue';
-  import TabsPage from "@/views/TabsPage.vue";
+  import {IonApp, IonRouterOutlet} from '@ionic/vue';
 </script>
 
 <template>
 <ion-app>
-  <TabsPage/>
+  <ion-router-outlet/>
 </ion-app>
 </template>

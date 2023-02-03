@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {IonIcon, IonPage, IonRouterOutlet, IonTabs, IonTabBar,IonTabButton} from "@ionic/vue";
+  import {IonIcon, IonPage, IonRouterOutlet, IonTabs, IonTabBar,IonTabButton, IonLabel} from "@ionic/vue";
   import {buildOutline, cubeOutline} from "ionicons/icons";
 </script>
 
@@ -8,12 +8,12 @@
   <ion-tabs>
     <ion-router-outlet/>
     <ion-tab-bar slot="bottom">
-      <ion-tab-button tab="tanks" href="/home">
+      <ion-tab-button tab="warehouse" href="/tabs/warehouse">
         <ion-icon :icon="cubeOutline" aria-hidden="true"></ion-icon>
         <ion-label>Warehouse</ion-label>
       </ion-tab-button>
 
-      <ion-tab-button tab="speakers" href="/manage">
+      <ion-tab-button tab="management" href="/tabs/management">
         <ion-icon :icon="buildOutline" aria-hidden="true"></ion-icon>
         <ion-label>Management</ion-label>
       </ion-tab-button>

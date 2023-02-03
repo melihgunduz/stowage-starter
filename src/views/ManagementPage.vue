@@ -9,14 +9,12 @@
   const buttons = ref([
     {name: 'Tank Ekle', type:'add'},
     {name: 'Tank Doldur', type:'fill'},
-    {name: 'Tank Boşalt', type:'unload'},
-    {name: 'Tank Sil', type:'delete'},
-    {name: 'Veritabanını Yeniden Başlat', type:'reconnect'},
+    {name: 'Tank Boşalt', type:'unload'}
   ])
 
   const openActionControl = (val) => {
     $router.push({
-      name: 'Control',
+      name: `Control`,
       params: {
         action: val,
       },
@@ -34,7 +32,7 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-content >
+  <ion-content :fullscreen="true" >
       <ion-list lines="full">
           <ion-item :detail="true" button v-for="button in buttons" :key="button" @click="openActionControl(button.type)">
             {{button.name}}

@@ -27,10 +27,6 @@
       const jso = JSON.stringify(test)
       const obj = JSON.parse(jso)
       tanks.value = obj.values
-      // for (let i = 0; i < tanks.value.length; i++) {
-      //   console.log(tanks.value[i].tankName)
-      // }
-
 
     } catch (e) {
       alert('error getting table')
