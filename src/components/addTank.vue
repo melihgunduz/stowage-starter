@@ -23,7 +23,7 @@
 
 
   const $router = useRouter()
-
+  const canBeAdded = ref(false)
   const presentAlert = async () => {
     const alert = await alertController.create({
       header: 'Hata',
@@ -64,7 +64,6 @@
       const jso = JSON.stringify(test)
       const obj = JSON.parse(jso)
       tanks.value = obj.values
-
     } catch (e) {
       alert('error getting table')
       console.log(e)
@@ -107,31 +106,34 @@
       }
     } else {
       for (let i = 0; i < tanks.value.length; i++){
-        if (tanks.value[i].tankName === tankProperties.value.name || tanks.value[i].tankNumber === tankProperties.value.number) {
-          await presentAlert()
-          return false
+
+        if (tanks.value[i].tankName === tankProperties.value.name || String(tanks.value[i].tankNumber) === String(tankProperties.value.number)) {
+          canBeAdded.value = false;
+          await presentAlert();
+          return false;
         } else {
-          try {
-            const query_1 = `INSERT INTO tank_table VALUES('${tankProperties.value.name}',
+          canBeAdded.value = true;
+        }
+
+      }
+      if (canBeAdded.value) {
+        try {
+          const query_1 = `INSERT INTO tank_table VALUES('${tankProperties.value.name}',
         ${tankProperties.value.number},${tankProperties.value.parcel},'${tankProperties.value.cargo}',
         ${tankProperties.value.capacity},${tankProperties.value.fullness},
         ${(tankProperties.value.fullness/100)  * tankProperties.value.capacity })`
 
-            await db.execute(query_1,false)
-            await presentToast();
-            await $router.replace({name:'Management'})
-            return true
+          await db.execute(query_1,false)
+          canBeAdded.value = false
+          await presentToast();
+          await $router.replace({name:'Management'})
 
-          } catch (e) {
-            alert('Tank eklenirken hata oluştu')
-            console.log(e)
-          }
+        } catch (e) {
+          alert('Tank eklenirken hata oluştu')
+          console.log(e)
         }
-        console.log(tanks.value[i])
       }
-
     }
-
 
   }
 
