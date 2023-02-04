@@ -27,8 +27,6 @@ import {onMounted, ref} from "vue";
 
 
   const $router = useRouter()
-  const unloadValue = ref(0)
-  const unloadableValue = ref(0)
 
   const tanks = ref([{
     tankName : null,
@@ -63,22 +61,17 @@ import {onMounted, ref} from "vue";
     }
   }
 
-  const onIonChange = ({detail}:any) => {
-    unloadValue.value = detail.value
-  }
 
 
   const changed = ({detail}:any) => {
     selectedTank.value = detail.value
-
-    unloadableValue.value = selectedTank.value.fullness
 
   }
 
 
   const presentToast = async () => {
     const toast = await toastController.create({
-      message: 'Tank Güncellendi',
+      message: 'Tank Silindi',
       duration: 1000,
       position: "top"
     });
@@ -86,24 +79,17 @@ import {onMounted, ref} from "vue";
     await toast.present();
   }
 
-  /**
-   * TODO: tanka yüklenecek malların yoğunlukları eklenerek dinamik veri düzenlemesi yapılacak
-   */
-  const unloadTank = () => {
-    const newFullness = ((selectedTank.value.weight - (selectedTank.value.weight*unloadValue.value/100))*100) / selectedTank.value.capacity
-    const query_1 = "UPDATE tank_table SET fullness = ? WHERE tankName = ?;"
-    const query_2 ="UPDATE tank_table SET weight = ? WHERE tankName = ?;"
-    db.run(query_1,[`${newFullness}`,`${selectedTank.value.tankName}`])
-    // db.run(query_1,[`${selectedTank.value.fullness - (selectedTank.value.fullness*unloadValue.value/100)}`,`${selectedTank.value.tankName}`])
-    db.run(query_2,[`${selectedTank.value.weight - (selectedTank.value.weight*unloadValue.value/100)}`,`${selectedTank.value.tankName}`])
+  const removeFromDatabase = () => {
+    const query = "DELETE FROM tank_table WHERE tankName = ?;"
+    db.run(query,[`${selectedTank.value.tankName}`])
   }
 
 
-  const prepareUnload = async () => {
+  const prepareRemove = async () => {
     const alert = await alertController.create({
       header: 'Uyarı',
       backdropDismiss : false,
-      message: `Seçilen tank ${unloadValue.value}% (${(selectedTank.value.weight*unloadValue.value/100)}kg) boşaltılacak. Onaylıyor musunuz?`,
+      message: `Seçilen tank silinecek. Onaylıyor musunuz?`,
       buttons: [
         {
           text: 'Vazgeç',
@@ -114,7 +100,7 @@ import {onMounted, ref} from "vue";
           role: 'confirm',
           handler: async () => {
             try {
-              await unloadTank();
+              await removeFromDatabase();
               await presentToast();
               await $router.replace({name: 'Management'});
             }catch (e){
@@ -149,13 +135,12 @@ import {onMounted, ref} from "vue";
     <ion-card class="ion-no-margin" color="select_box">
       <ion-card-header>
         <ion-card-title>
-          Boşaltılacak Tank
+          Silinecek Tank
         </ion-card-title>
       </ion-card-header>
       <ion-card-content class="ion-no-padding ion-padding-vertical">
-        <ion-select @ionChange="changed" ok-text="Tank Seç" cancel-text="İptal" class="ion-padding" placeholder="Boşaltılacak Tankı Seçiniz">
-          <ion-select-option :disabled="tank.fullness === 0" v-for="tank in tanks" :key="tank" :value="tank">{{tank.tankName}}</ion-select-option>
-
+        <ion-select @ionChange="changed" ok-text="Tank Seç" cancel-text="İptal" class="ion-padding" placeholder="Silinecek Tankı Seçiniz">
+          <ion-select-option v-for="tank in tanks" :key="tank" :value="tank">{{tank.tankName}}</ion-select-option>
         </ion-select>
       </ion-card-content>
     </ion-card>
@@ -178,23 +163,9 @@ import {onMounted, ref} from "vue";
         <ion-text>Tank bilgisi için tank seçimi yapın</ion-text>
       </ion-card-content>
     </ion-card>
-    <ion-card :disabled="!selectedTank.tankName" color="medium" class="ion-no-margin ion-margin-top">
-      <ion-card-header>
-        <ion-card-title>
-          Boşaltma Miktarı
-        </ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-range @ionChange="onIonChange" class="ion-no-padding" :pin="true">
-          <ion-text slot="start">0%</ion-text>
-          <ion-text slot="end">100%</ion-text>
-        </ion-range>
-        <ion-text>Boşaltılan: {{unloadValue}}%</ion-text>
-      </ion-card-content>
-    </ion-card>
   </ion-content>
   <ion-footer class="ion-padding ion-no-border">
-    <ion-button :disabled="unloadValue === 0" color="success" expand="block" @click="prepareUnload">Boşalt</ion-button>
+    <ion-button :disabled="selectedTank.tankName === null" color="danger" expand="block" @click="prepareRemove">Sil</ion-button>
   </ion-footer>
 </ion-page>
 </template>

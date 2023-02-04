@@ -9,7 +9,8 @@
   const buttons = ref([
     {name: 'Tank Ekle', type:'add'},
     {name: 'Tank Doldur', type:'fill'},
-    {name: 'Tank Boşalt', type:'unload'}
+    {name: 'Tank Boşalt', type:'unload'},
+    {name: 'Tank Sil', type:'remove'}
   ])
 
   const openActionControl = (val) => {
