@@ -18,10 +18,12 @@ const routes: Array<RouteRecordRaw> = [
             },
             {
                 path: 'warehouse',
+                name: 'Warehouse',
                 component: () => import('@/views/HomePage.vue')
             },
             {
                 path: 'management',
+                name : 'Management',
                 component: () => import('@/views/ManagementPage.vue'),
             },
         ]

@@ -98,7 +98,7 @@
 
         await db.execute(query_1,false)
         await presentToast();
-        await $router.push({name: 'Management'})
+        await $router.replace({name: 'Management'})
         return true
 
       } catch (e) {
@@ -119,7 +119,7 @@
 
             await db.execute(query_1,false)
             await presentToast();
-            await $router.push({name: 'Management'})
+            await $router.replace({name:'Management'})
             return true
 
           } catch (e) {
