@@ -71,8 +71,6 @@
   }
 
 
-
-
   const tankProperties = ref({
     name: null,
     number: null,
@@ -114,7 +112,6 @@
         } else {
           canBeAdded.value = true;
         }
-
       }
       if (canBeAdded.value) {
         try {

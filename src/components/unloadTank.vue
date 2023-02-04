@@ -1,10 +1,33 @@
 <script setup lang="ts">
-import {IonPage, IonHeader, IonToolbar, IonButtons, IonButton, IonBackButton, IonContent, IonFooter, IonSelect, IonTitle, IonSelectOption, IonRange, IonText, IonCard, IonCardTitle,IonCardHeader,IonCardContent} from "@ionic/vue";
+  import {
+    IonPage,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonButton,
+    IonBackButton,
+    IonContent,
+    IonFooter,
+    IonSelect,
+    IonTitle,
+    IonSelectOption,
+    IonRange,
+    IonText,
+    IonCard,
+    IonCardTitle,
+    IonCardHeader,
+    IonCardContent,
+    toastController, alertController
+  } from "@ionic/vue";
 import {createConn,db} from "@/helpers/dataBaseConnection"
 import {onMounted, ref} from "vue";
+  import {useRouter} from "vue-router";
 
 
-  const fullnessOfTank = ref(0)
+
+
+  const $router = useRouter()
+  const unloadValue = ref(0)
 
   const tanks = ref([{
     tankName : null,
@@ -31,13 +54,7 @@ import {onMounted, ref} from "vue";
       const test = await db.query(query) //use db.query when use SELECT
       const jso = JSON.stringify(test)
       const obj = JSON.parse(jso)
-
-
       tanks.value = obj.values
-
-      // for (let i = 0; i < tanks.value.length; i++) {
-      //   console.log(tanks.value[i].tankName)
-      // }
 
     } catch (e) {
       alert('error getting table')
@@ -46,7 +63,7 @@ import {onMounted, ref} from "vue";
   }
 
   const onIonChange = ({detail}:any) => {
-    fullnessOfTank.value = detail.value
+    unloadValue.value = detail.value
   }
 
 
@@ -54,8 +71,54 @@ import {onMounted, ref} from "vue";
     selectedTank.value = detail.value
     const str = JSON.stringify(selectedTank.value)
     const obj = JSON.parse(str)
-    console.log(obj.tankName)
+  }
 
+
+  const presentToast = async () => {
+    const toast = await toastController.create({
+      message: 'Tank Güncellendi',
+      duration: 1000,
+      position: "top"
+    });
+
+    await toast.present();
+  }
+
+
+  const unloadTank = () => {
+    const query_1 = "UPDATE tank_table SET fullness = ? WHERE tankName = ?;"
+    const query_2 ="UPDATE tank_table SET weight = ? WHERE tankName = ?;"
+    db.run(query_1,[`${selectedTank.value.fullness - unloadValue.value}`,`${selectedTank.value.tankName}`])
+    db.run(query_2,[`${selectedTank.value.weight - (unloadValue.value/100)}`,`${selectedTank.value.tankName}`])
+  }
+
+
+  const prepareUnload = async () => {
+    const alert = await alertController.create({
+      header: 'Uyarı',
+      backdropDismiss : false,
+      message: `Seçilen tank ${unloadValue.value}% (${(unloadValue.value/100)}kg) boşaltılacak. Onaylıyor musunuz?`,
+      buttons: [
+        {
+          text: 'Vazgeç',
+          role: 'cancel',
+        },
+        {
+          text: 'Onayla',
+          role: 'confirm',
+          handler: async () => {
+            try {
+              await unloadTank();
+              await presentToast();
+              await $router.replace({name: 'Management'});
+            }catch (e){
+              console.log(e)
+            }
+          }
+        },
+      ],
+    });
+    await alert.present();
   }
 
 
@@ -101,14 +164,14 @@ import {onMounted, ref} from "vue";
           <ion-text>Parsel Numarası: {{ selectedTank.parcelNumber }}</ion-text>
           <ion-text>Yük: {{ selectedTank.cargo }}</ion-text>
           <ion-text>Kapasite: {{ selectedTank.capacity }} m3</ion-text>
-          <ion-text>Doluluk: {{ selectedTank.fullness }}</ion-text>
+          <ion-text>Doluluk: {{ selectedTank.fullness }} %</ion-text>
           <ion-text>Ağırlık: {{ selectedTank.weight }} kg</ion-text>
       </ion-card-content>
       <ion-card-content v-else>
         <ion-text>Tank bilgisi için tank seçimi yapın</ion-text>
       </ion-card-content>
     </ion-card>
-    <ion-card color="medium" class="ion-no-margin ion-margin-top">
+    <ion-card :disabled="!selectedTank.tankName" color="medium" class="ion-no-margin ion-margin-top">
       <ion-card-header>
         <ion-card-title>
           Boşaltma Miktarı
@@ -119,12 +182,12 @@ import {onMounted, ref} from "vue";
           <ion-text slot="start">0%</ion-text>
           <ion-text slot="end">100%</ion-text>
         </ion-range>
-        <ion-text>Boşaltılan: {{fullnessOfTank}}%</ion-text>
+        <ion-text>Boşaltılan: {{unloadValue}}%</ion-text>
       </ion-card-content>
     </ion-card>
   </ion-content>
   <ion-footer class="ion-padding ion-no-border">
-    <ion-button color="success" expand="block">Boşalt</ion-button>
+    <ion-button :disabled="unloadValue === 0" color="success" expand="block" @click="prepareUnload">Boşalt</ion-button>
   </ion-footer>
 </ion-page>
 </template>

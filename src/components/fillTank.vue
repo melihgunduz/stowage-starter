@@ -31,13 +31,7 @@
       const test = await db.query(query) //use db.query when use SELECT
       const jso = JSON.stringify(test)
       const obj = JSON.parse(jso)
-
-
       tanks.value = obj.values
-
-      // for (let i = 0; i < tanks.value.length; i++) {
-      //   console.log(tanks.value[i].tankName)
-      // }
 
     } catch (e) {
       alert('error getting table')
@@ -101,8 +95,8 @@
           <ion-text>Parsel Numarası: {{ selectedTank.parcelNumber }}</ion-text>
           <ion-text>Yük: {{ selectedTank.cargo }}</ion-text>
           <ion-text>Kapasite: {{ selectedTank.capacity }} m3</ion-text>
-          <ion-text>Doluluk: {{ selectedTank.fullness }} kg</ion-text>
-          <ion-text>Ağırlık: {{ selectedTank.weight }}</ion-text>
+          <ion-text>Doluluk: {{ selectedTank.fullness }} %</ion-text>
+          <ion-text>Ağırlık: {{ selectedTank.weight }} kg</ion-text>
       </ion-card-content>
       <ion-card-content v-else>
         <ion-text>Tank bilgisi için tank seçimi yapın</ion-text>
