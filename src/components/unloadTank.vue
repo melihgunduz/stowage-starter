@@ -28,6 +28,7 @@ import {onMounted, ref} from "vue";
 
   const $router = useRouter()
   const unloadValue = ref(0)
+  const unloadableValue = ref(0)
 
   const tanks = ref([{
     tankName : null,
@@ -69,8 +70,9 @@ import {onMounted, ref} from "vue";
 
   const changed = ({detail}:any) => {
     selectedTank.value = detail.value
-    const str = JSON.stringify(selectedTank.value)
-    const obj = JSON.parse(str)
+
+    unloadableValue.value = selectedTank.value.fullness
+
   }
 
 
@@ -88,8 +90,8 @@ import {onMounted, ref} from "vue";
   const unloadTank = () => {
     const query_1 = "UPDATE tank_table SET fullness = ? WHERE tankName = ?;"
     const query_2 ="UPDATE tank_table SET weight = ? WHERE tankName = ?;"
-    db.run(query_1,[`${selectedTank.value.fullness - unloadValue.value}`,`${selectedTank.value.tankName}`])
-    db.run(query_2,[`${selectedTank.value.weight - (unloadValue.value/100)}`,`${selectedTank.value.tankName}`])
+    db.run(query_1,[`${selectedTank.value.fullness - (selectedTank.value.fullness*unloadValue.value/100)}`,`${selectedTank.value.tankName}`])
+    db.run(query_2,[`${selectedTank.value.weight - (selectedTank.value.weight*unloadValue.value/100)}`,`${selectedTank.value.tankName}`])
   }
 
 
@@ -97,7 +99,7 @@ import {onMounted, ref} from "vue";
     const alert = await alertController.create({
       header: 'Uyarı',
       backdropDismiss : false,
-      message: `Seçilen tank ${unloadValue.value}% (${(unloadValue.value/100)}kg) boşaltılacak. Onaylıyor musunuz?`,
+      message: `Seçilen tank ${unloadValue.value}% (${(selectedTank.value.weight*unloadValue.value/100)}kg) boşaltılacak. Onaylıyor musunuz?`,
       buttons: [
         {
           text: 'Vazgeç',
@@ -148,7 +150,8 @@ import {onMounted, ref} from "vue";
       </ion-card-header>
       <ion-card-content class="ion-no-padding ion-padding-vertical">
         <ion-select @ionChange="changed" ok-text="Tank Seç" cancel-text="İptal" class="ion-padding" placeholder="Boşaltılacak Tankı Seçiniz">
-          <ion-select-option v-for="tank in tanks" :key="tank" :value="tank">{{tank.tankName}}</ion-select-option>
+          <ion-select-option :disabled="tank.fullness === 0" v-for="tank in tanks" :key="tank" :value="tank">{{tank.tankName}}</ion-select-option>
+
         </ion-select>
       </ion-card-content>
     </ion-card>

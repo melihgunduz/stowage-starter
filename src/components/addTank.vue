@@ -166,11 +166,11 @@
         </ion-item>
         <ion-item>
           <ion-label color="inputColor" position="stacked">Yük</ion-label>
-          <ion-input color="inputColor" v-model="tankProperties.cargo" placeholder="Yüklenecek Yükü Yazın" type="text"/>
+          <ion-input color="inputColor" v-model="tankProperties.cargo" placeholder="Yüklenecek Yükün Adını Yazın" type="text"/>
         </ion-item>
         <ion-item>
           <ion-label color="inputColor" position="stacked">Kapasite</ion-label>
-          <ion-input color="inputColor" v-model="tankProperties.capacity" placeholder="Metreküp cinsinden kapasite girin " type="number"/>
+          <ion-input color="inputColor" v-model="tankProperties.capacity" placeholder="Metreküp Cinsinden Kapasite Girin " type="number"/>
         </ion-item>
       </ion-list>
     </ion-card>

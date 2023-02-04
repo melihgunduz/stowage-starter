@@ -88,7 +88,7 @@
                 Yük: {{ tank.cargo }}
               </ion-label>
               <ion-label>
-                Doluluk: {{ tank.fullness }}
+                Doluluk: {{ tank.fullness }}%
               </ion-label>
               <ion-label>
                 Ağırlık: {{ tank.weight }} kg
