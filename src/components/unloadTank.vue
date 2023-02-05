@@ -149,7 +149,6 @@ import {onMounted, ref} from "vue";
       <ion-card-content class="ion-no-padding ion-padding-vertical">
         <ion-select @ionChange="changed" ok-text="Tank Seç" cancel-text="İptal" class="ion-padding" placeholder="Boşaltılacak Tankı Seçiniz">
           <ion-select-option :disabled="tank.fullness === 0" v-for="tank in tanks" :key="tank" :value="tank">{{tank.tankName}}</ion-select-option>
-
         </ion-select>
       </ion-card-content>
     </ion-card>

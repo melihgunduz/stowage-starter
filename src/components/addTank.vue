@@ -15,7 +15,7 @@
     IonTitle,
     IonCard,
     IonText,
-    alertController, toastController
+    alertController, toastController, IonSelect
   } from "@ionic/vue";
   import {onMounted, ref} from "vue"
   import {createConn, db} from '@/helpers/dataBaseConnection'
@@ -46,6 +46,11 @@
     await toast.present();
   }
 
+  const goods = ref([{
+    goodName : null,
+    goodNumber : null,
+    density: NaN
+  }])
 
   const tanks = ref([{
     tankName : null,
@@ -70,6 +75,19 @@
     }
   }
 
+  const getGoods = async () => {
+    try {
+      const query = 'SELECT * FROM goods_table'
+      const answerFromDb = await db.query(query) //use db.query when use SELECT
+      const goodsAsText = JSON.stringify(answerFromDb)
+      const goodsFromDb = JSON.parse(goodsAsText)
+      goods.value = goodsFromDb.values
+    } catch (e) {
+      alert('error getting table')
+      console.log(e)
+    }
+  }
+
 
   const tankProperties = ref({
     name: null,
@@ -80,9 +98,14 @@
     fullness: 100,
   })
 
+  const changed = (event:any) => {
+    tankProperties.value.cargo = event.target.value.goodName
+  }
+
   onMounted(  async () => {
-     await createConn()
-     await getTanks()
+    await createConn()
+    await getGoods()
+    await getTanks()
   })
 
   const add = async () => {
@@ -153,23 +176,25 @@
     <ion-card class="ion-no-margin">
       <ion-list>
         <ion-item>
-          <ion-label position="stacked" color="inputColor">Tank Adı</ion-label>
+          <ion-label position="stacked">Tank Adı</ion-label>
           <ion-input color="inputColor" v-model="tankProperties.name" placeholder="Tank Adını Girin"></ion-input>
         </ion-item>
         <ion-item>
-          <ion-label color="inputColor" position="stacked">Tank Numarası</ion-label>
+          <ion-label position="stacked">Tank Numarası</ion-label>
           <ion-input color="inputColor" v-model="tankProperties.number" placeholder="Tank Numarasını Girin" type="number"/>
         </ion-item>
         <ion-item>
-          <ion-label color="inputColor" position="stacked">Tank Parseli</ion-label>
+          <ion-label position="stacked">Tank Parseli</ion-label>
           <ion-input color="inputColor" v-model="tankProperties.parcel" placeholder="Tank Parselini Girin" type="number"/>
         </ion-item>
         <ion-item>
-          <ion-label color="inputColor" position="stacked">Yük</ion-label>
-          <ion-input color="inputColor" v-model="tankProperties.cargo" placeholder="Yüklenecek Yükün Adını Yazın" type="text"/>
+          <ion-label position="stacked">Yük</ion-label>
+          <ion-select @ionChange="changed($event)" ok-text="Yük Seç" cancel-text="İptal" placeholder="Yüklenilecek Yükü Seçiniz">
+            <ion-select-option v-for="good in goods" :key="good" :value="good">{{good.goodName}}</ion-select-option>
+          </ion-select>
         </ion-item>
         <ion-item>
-          <ion-label color="inputColor" position="stacked">Kapasite</ion-label>
+          <ion-label position="stacked">Kapasite</ion-label>
           <ion-input color="inputColor" v-model="tankProperties.capacity" placeholder="Metreküp Cinsinden Kapasite Girin " type="number"/>
         </ion-item>
       </ion-list>
@@ -186,5 +211,13 @@
 <style scoped>
 ion-card {
   box-shadow: none;
+}
+ion-label {
+  --placeholder-opacity: 80%;
+}
+ion-select {
+  --placeholder-color: #69a8bb;
+  --placeholder-opacity: 80%;
+  color: #69a8bb;
 }
 </style>
