@@ -5,6 +5,7 @@
   import UnloadTank from "@/components/unloadTank.vue";
   import DeleteTank from "@/components/deleteTank.vue";
   import AddGood from "@/components/addGood.vue";
+  import DeleteGood from "@/components/deleteGood.vue";
 
 
   const $route = useRoute();
@@ -19,6 +20,7 @@
   <unload-tank v-else-if="actionType === 'unload'" />
   <delete-tank v-else-if="actionType === 'remove'" />
   <add-good v-else-if="actionType === 'createGood'" />
+  <delete-good v-else-if="actionType === 'deleteGood'" />
 </template>
 
 

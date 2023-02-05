@@ -11,7 +11,8 @@
     {name: 'Tank Doldur', type:'fill'},
     {name: 'Tank Boşalt', type:'unload'},
     {name: 'Tank Sil', type:'remove'},
-    {name: 'Yük Oluştur', type:'createGood'}
+    {name: 'Yük Oluştur', type:'createGood'},
+    {name: 'Yük Sil', type:'deleteGood'}
   ])
 
   const openActionControl = (val) => {
