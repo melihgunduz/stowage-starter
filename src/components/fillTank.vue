@@ -1,10 +1,33 @@
 <script setup lang="ts">
-  import {IonPage, IonHeader, IonToolbar, IonButtons, IonButton, IonBackButton, IonContent, IonFooter, IonSelect, IonTitle, IonSelectOption, IonRange, IonText, IonCard, IonCardTitle,IonCardHeader,IonCardContent} from "@ionic/vue";
+  import {
+    IonPage,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonButton,
+    IonBackButton,
+    IonContent,
+    IonFooter,
+    IonSelect,
+    IonTitle,
+    IonSelectOption,
+    IonRange,
+    IonText,
+    IonCard,
+    IonCardTitle,
+    IonCardHeader,
+    IonCardContent,
+    toastController, alertController
+  } from "@ionic/vue";
   import {createConn,db} from "@/helpers/dataBaseConnection"
   import {onMounted, ref} from "vue";
+  import {useRouter} from "vue-router";
 
 
-  const fullnessOfTank = ref(0)
+
+
+  const $router = useRouter()
+  const loadValue = ref(0)
 
   const tanks = ref([{
     tankName : null,
@@ -40,16 +63,65 @@
   }
 
   const onIonChange = ({detail}:any) => {
-    fullnessOfTank.value = detail.value
+    loadValue.value = detail.value
   }
 
 
   const changed = ({detail}:any) => {
     selectedTank.value = detail.value
-    const str = JSON.stringify(selectedTank.value)
-    const obj = JSON.parse(str)
-    console.log(obj.tankName)
 
+  }
+
+
+  const presentToast = async () => {
+    const toast = await toastController.create({
+      message: 'Tank Güncellendi',
+      duration: 1000,
+      position: "top"
+    });
+
+    await toast.present();
+  }
+
+  /**
+   * TODO: tanka yüklenecek malların yoğunlukları eklenerek dinamik veri düzenlemesi yapılacak
+   */
+  const unloadTank = () => {
+    const newFullness = ((selectedTank.value.weight + (selectedTank.value.weight*loadValue.value/100))*100) / selectedTank.value.capacity
+    const newWeight = selectedTank.value.weight === 0 ? selectedTank.value.capacity * (loadValue.value/100) : selectedTank.value.weight + (selectedTank.value.weight * loadValue.value/100)
+    const query_1 = "UPDATE tank_table SET fullness = ? WHERE tankName = ?;"
+    const query_2 ="UPDATE tank_table SET weight = ? WHERE tankName = ?;"
+    db.run(query_1,[`${newFullness}`,`${selectedTank.value.tankName}`])
+    db.run(query_2,[`${newWeight}`,`${selectedTank.value.tankName}`])
+  }
+
+
+  const prepareUnload = async () => {
+    const alert = await alertController.create({
+      header: 'Uyarı',
+      backdropDismiss : false,
+      message: `Seçilen tank ${loadValue.value}% (${(selectedTank.value.weight*loadValue.value/100)}kg) doldurulacak. Onaylıyor musunuz?`,
+      buttons: [
+        {
+          text: 'Vazgeç',
+          role: 'cancel',
+        },
+        {
+          text: 'Onayla',
+          role: 'confirm',
+          handler: async () => {
+            try {
+              await unloadTank();
+              await presentToast();
+              await $router.replace({name: 'Management'});
+            }catch (e){
+              console.log(e)
+            }
+          }
+        },
+      ],
+    });
+    await alert.present();
   }
 
 
@@ -79,7 +151,8 @@
       </ion-card-header>
       <ion-card-content class="ion-no-padding ion-padding-vertical">
         <ion-select @ionChange="changed" ok-text="Tank Seç" cancel-text="İptal" class="ion-padding" placeholder="Doldurulacak Tankı Seçiniz">
-          <ion-select-option v-for="tank in tanks" :key="tank" :value="tank">{{tank.tankName}}</ion-select-option>
+          <ion-select-option :disabled="tank.fullness > 50" v-for="tank in tanks" :key="tank" :value="tank">{{tank.tankName}}</ion-select-option>
+
         </ion-select>
       </ion-card-content>
     </ion-card>
@@ -89,14 +162,14 @@
           Tank Bilgileri
         </ion-card-title>
       </ion-card-header>
-      <ion-card-content class="ion-wrap" v-if="selectedTank.tankName !==null || ''">
-          <ion-text>Tank Adı: {{ selectedTank.tankName }}</ion-text>
-          <ion-text>Tank Numarası: {{ selectedTank.tankNumber }}</ion-text>
-          <ion-text>Parsel Numarası: {{ selectedTank.parcelNumber }}</ion-text>
-          <ion-text>Yük: {{ selectedTank.cargo }}</ion-text>
-          <ion-text>Kapasite: {{ selectedTank.capacity }} m3</ion-text>
-          <ion-text>Doluluk: {{ selectedTank.fullness }} %</ion-text>
-          <ion-text>Ağırlık: {{ selectedTank.weight }} kg</ion-text>
+      <ion-card-content v-if="selectedTank.tankName !==null || ''">
+        <ion-text>Tank Adı: {{ selectedTank.tankName }}</ion-text>
+        <ion-text>Tank Numarası: {{ selectedTank.tankNumber }}</ion-text>
+        <ion-text>Parsel Numarası: {{ selectedTank.parcelNumber }}</ion-text>
+        <ion-text>Yük: {{ selectedTank.cargo }}</ion-text>
+        <ion-text>Kapasite: {{ selectedTank.capacity }} m3</ion-text>
+        <ion-text>Doluluk: {{ selectedTank.fullness }} %</ion-text>
+        <ion-text>Ağırlık: {{ selectedTank.weight }} kg</ion-text>
       </ion-card-content>
       <ion-card-content v-else>
         <ion-text>Tank bilgisi için tank seçimi yapın</ion-text>
@@ -113,12 +186,12 @@
           <ion-text slot="start">0%</ion-text>
           <ion-text slot="end">100%</ion-text>
         </ion-range>
-        <ion-text>Doldurulan: {{fullnessOfTank}}%</ion-text>
+        <ion-text>Doldurulan: {{loadValue}}%</ion-text>
       </ion-card-content>
     </ion-card>
   </ion-content>
   <ion-footer class="ion-padding ion-no-border">
-    <ion-button color="success" expand="block">Doldur</ion-button>
+    <ion-button :disabled="loadValue === 0" color="success" expand="block" @click="prepareUnload">Doldur</ion-button>
   </ion-footer>
 </ion-page>
 </template>

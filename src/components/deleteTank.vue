@@ -11,7 +11,6 @@
     IonSelect,
     IonTitle,
     IonSelectOption,
-    IonRange,
     IonText,
     IonCard,
     IonCardTitle,

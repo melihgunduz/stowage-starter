@@ -28,7 +28,6 @@ import {onMounted, ref} from "vue";
 
   const $router = useRouter()
   const unloadValue = ref(0)
-  const unloadableValue = ref(0)
 
   const tanks = ref([{
     tankName : null,
@@ -71,8 +70,6 @@ import {onMounted, ref} from "vue";
   const changed = ({detail}:any) => {
     selectedTank.value = detail.value
 
-    unloadableValue.value = selectedTank.value.fullness
-
   }
 
 
@@ -86,11 +83,8 @@ import {onMounted, ref} from "vue";
     await toast.present();
   }
 
-  /**
-   * TODO: tanka yüklenecek malların yoğunlukları eklenerek dinamik veri düzenlemesi yapılacak
-   */
   const unloadTank = () => {
-    const newFullness = ((selectedTank.value.weight - (selectedTank.value.weight*unloadValue.value/100))*100) / selectedTank.value.capacity
+    const newFullness = ((selectedTank.value.fullness - (selectedTank.value.fullness*unloadValue.value/100))*100) / selectedTank.value.capacity
     const query_1 = "UPDATE tank_table SET fullness = ? WHERE tankName = ?;"
     const query_2 ="UPDATE tank_table SET weight = ? WHERE tankName = ?;"
     db.run(query_1,[`${newFullness}`,`${selectedTank.value.tankName}`])
