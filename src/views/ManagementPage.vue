@@ -10,7 +10,8 @@
     {name: 'Tank Ekle', type:'add'},
     {name: 'Tank Doldur', type:'fill'},
     {name: 'Tank Boşalt', type:'unload'},
-    {name: 'Tank Sil', type:'remove'}
+    {name: 'Tank Sil', type:'remove'},
+    {name: 'Yük Oluştur', type:'createGood'}
   ])
 
   const openActionControl = (val) => {
