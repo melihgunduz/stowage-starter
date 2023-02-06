@@ -25,7 +25,8 @@
       cargo TEXT,
       capacity INTEGER,
       fullness INTEGER,
-      weight INTEGER
+      weight INTEGER,
+      goodDensity INTEGER
     );
     CREATE TABLE IF NOT EXISTS goods_table (
       goodName TEXT,

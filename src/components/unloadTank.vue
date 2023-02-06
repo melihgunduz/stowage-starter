@@ -36,7 +36,8 @@ import {onMounted, ref} from "vue";
     cargo: null,
     capacity: NaN,
     fullness: NaN,
-    weight:NaN
+    weight:NaN,
+    goodDensity: NaN
   }])
 
   const selectedTank = ref({
@@ -46,7 +47,8 @@ import {onMounted, ref} from "vue";
     cargo: null,
     capacity: NaN,
     fullness: NaN,
-    weight:NaN
+    weight:NaN,
+    goodDensity: NaN
   })
   const getTanks = async () => {
     try {
@@ -84,12 +86,16 @@ import {onMounted, ref} from "vue";
   }
 
   const unloadTank = () => {
-    const newFullness = ((selectedTank.value.fullness - (selectedTank.value.fullness*unloadValue.value/100))*100) / selectedTank.value.capacity
+
+    const newWeight = selectedTank.value.weight - (selectedTank.value.weight * (unloadValue.value / 100))
+    const newFullVolume = newWeight / selectedTank.value.goodDensity
+    const newFullness = ( (newFullVolume) / selectedTank.value.capacity)*100
+    // const newFullness = ((selectedTank.value.fullness - (selectedTank.value.fullness*unloadValue.value/100)))
     const query_1 = "UPDATE tank_table SET fullness = ? WHERE tankName = ?;"
     const query_2 ="UPDATE tank_table SET weight = ? WHERE tankName = ?;"
     db.run(query_1,[`${newFullness}`,`${selectedTank.value.tankName}`])
     // db.run(query_1,[`${selectedTank.value.fullness - (selectedTank.value.fullness*unloadValue.value/100)}`,`${selectedTank.value.tankName}`])
-    db.run(query_2,[`${selectedTank.value.weight - (selectedTank.value.weight*unloadValue.value/100)}`,`${selectedTank.value.tankName}`])
+    db.run(query_2,[`${newWeight}`,`${selectedTank.value.tankName}`])
   }
 
 
@@ -97,7 +103,7 @@ import {onMounted, ref} from "vue";
     const alert = await alertController.create({
       header: 'Uyarı',
       backdropDismiss : false,
-      message: `Seçilen tank ${unloadValue.value}% (${(selectedTank.value.weight*unloadValue.value/100)}kg) boşaltılacak. Onaylıyor musunuz?`,
+      message: `Seçilen tank ${unloadValue.value}% (${(selectedTank.value.weight * unloadValue.value/100)}kg) boşaltılacak. Onaylıyor musunuz?`,
       buttons: [
         {
           text: 'Vazgeç',

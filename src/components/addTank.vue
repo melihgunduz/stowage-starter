@@ -98,8 +98,11 @@
     fullness: 100,
   })
 
+  const goodDensity = ref(NaN);
+
   const changed = (event:any) => {
     tankProperties.value.cargo = event.target.value.goodName
+    goodDensity.value = event.target.value.density
   }
 
   onMounted(  async () => {
@@ -114,7 +117,7 @@
         const query_1 = `INSERT INTO tank_table VALUES('${tankProperties.value.name}',
         ${tankProperties.value.number},${tankProperties.value.parcel},'${tankProperties.value.cargo}',
         ${tankProperties.value.capacity},${tankProperties.value.fullness},
-        ${(tankProperties.value.fullness/100)  * tankProperties.value.capacity })`
+        ${(goodDensity.value)  * tankProperties.value.capacity }, ${goodDensity.value})`
 
         await db.execute(query_1,false)
         await presentToast();
@@ -141,7 +144,7 @@
           const query_1 = `INSERT INTO tank_table VALUES('${tankProperties.value.name}',
         ${tankProperties.value.number},${tankProperties.value.parcel},'${tankProperties.value.cargo}',
         ${tankProperties.value.capacity},${tankProperties.value.fullness},
-        ${(tankProperties.value.fullness/100)  * tankProperties.value.capacity })`
+        ${(goodDensity.value)  * tankProperties.value.capacity },${goodDensity.value})`
 
           await db.execute(query_1,false)
           canBeAdded.value = false
