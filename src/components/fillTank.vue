@@ -92,14 +92,11 @@
     const emptyVolume = selectedTank.value.capacity - selectedTank.value.capacity * (selectedTank.value.fullness/100)
     if (selectedTank.value.weight === 0) {
       newWeight = (selectedTank.value.capacity * (loadValue.value/100)) * selectedTank.value.goodDensity
-      newFullVolume = newWeight / selectedTank.value.goodDensity
-      newFullness = (newFullVolume / selectedTank.value.capacity)*100
     } else {
       newWeight = selectedTank.value.weight + ((emptyVolume * loadValue.value/100) * selectedTank.value.goodDensity)
-      newFullVolume = newWeight / selectedTank.value.goodDensity
-      newFullness = (newFullVolume / selectedTank.value.capacity)*100
     }
-    // const newFullVolume = newWeight / selectedTank.value.goodDensity
+    newFullVolume = newWeight / selectedTank.value.goodDensity
+    newFullness = (newFullVolume / selectedTank.value.capacity)*100
     const query_1 = "UPDATE tank_table SET fullness = ? WHERE tankName = ?;"
     const query_2 ="UPDATE tank_table SET weight = ? WHERE tankName = ?;"
     db.run(query_1,[`${newFullness}`,`${selectedTank.value.tankName}`])
@@ -109,10 +106,8 @@
 
   }
 
-  // alt taraftaki weight yerine kalan hacim * yoğunluktan gelen ağırlık bulunup bir şey yapılacak buna göre üstteki fonksiyon düzeltilecek
   const prepareLoad = async () => {
     const emptyVolume = selectedTank.value.capacity - selectedTank.value.capacity * (selectedTank.value.fullness/100) // kalan hacim
-    // const weightForEmptyVolume = emptyVolume * selectedTank.value.goodDensity //kalan hacme sığacak max ağırlık
     const alert = await alertController.create({
       header: 'Uyarı',
       backdropDismiss : false,
@@ -191,7 +186,7 @@
         <ion-text>Tank bilgisi için tank seçimi yapın</ion-text>
       </ion-card-content>
     </ion-card>
-    <ion-card color="medium" class="ion-no-margin ion-margin-top">
+    <ion-card :disabled="!selectedTank.tankName" color="medium" class="ion-no-margin ion-margin-top">
       <ion-card-header>
         <ion-card-title>
           Doldurma Miktarı
