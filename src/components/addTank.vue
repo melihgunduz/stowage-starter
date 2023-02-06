@@ -218,6 +218,9 @@ ion-card {
 ion-label {
   --placeholder-opacity: 80%;
 }
+ion-input {
+  --placeholder-opacity: 80%;
+}
 ion-select {
   --placeholder-color: #69a8bb;
   --placeholder-opacity: 80%;

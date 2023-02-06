@@ -141,15 +141,15 @@
     <ion-card class="ion-no-margin">
       <ion-list>
         <ion-item>
-          <ion-label position="stacked" color="inputColor">Yük Adı</ion-label>
+          <ion-label position="stacked">Yük Adı</ion-label>
           <ion-input color="inputColor" v-model="goodProperties.name" placeholder="Yük Adını Girin"></ion-input>
         </ion-item>
         <ion-item>
-          <ion-label color="inputColor" position="stacked">Yük Numarası</ion-label>
+          <ion-label position="stacked">Yük Numarası</ion-label>
           <ion-input color="inputColor" v-model="goodProperties.number" placeholder="Yük Numarasını Girin" type="number"/>
         </ion-item>
         <ion-item>
-          <ion-label color="inputColor" position="stacked">Yük Yoğunluğu (kg/m3)</ion-label>
+          <ion-label position="stacked">Yük Yoğunluğu (kg/m3)</ion-label>
           <ion-input color="inputColor" v-model="goodProperties.density" placeholder="Yük Yoğunluğunu Girin" type="number"/>
         </ion-item>
       </ion-list>
@@ -165,5 +165,9 @@
 <style scoped>
 ion-card {
   box-shadow: none;
+}
+
+ion-input {
+  --placeholder-opacity: 80%;
 }
 </style>

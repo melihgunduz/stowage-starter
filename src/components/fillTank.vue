@@ -87,22 +87,19 @@
 
   const loadTank = () => {
     let newWeight = NaN;
-    let newFullVolume = NaN; //dolu kısmın hacmi
-    let newFullness = NaN;
-    const emptyVolume = selectedTank.value.capacity - selectedTank.value.capacity * (selectedTank.value.fullness/100)
     if (selectedTank.value.weight === 0) {
       newWeight = (selectedTank.value.capacity * (loadValue.value/100)) * selectedTank.value.goodDensity
     } else {
+      const emptyVolume = selectedTank.value.capacity - selectedTank.value.capacity * (selectedTank.value.fullness/100)
       newWeight = selectedTank.value.weight + ((emptyVolume * loadValue.value/100) * selectedTank.value.goodDensity)
     }
-    newFullVolume = newWeight / selectedTank.value.goodDensity
-    newFullness = (newFullVolume / selectedTank.value.capacity)*100
+    const newFullVolume = newWeight / selectedTank.value.goodDensity
+    const newFullness = (newFullVolume / selectedTank.value.capacity)*100
+
     const query_1 = "UPDATE tank_table SET fullness = ? WHERE tankName = ?;"
     const query_2 ="UPDATE tank_table SET weight = ? WHERE tankName = ?;"
     db.run(query_1,[`${newFullness}`,`${selectedTank.value.tankName}`])
     db.run(query_2,[`${newWeight}`,`${selectedTank.value.tankName}`])
-
-
 
   }
 
@@ -134,7 +131,6 @@
     });
     await alert.present();
   }
-
 
   onMounted(async () => {
     await createConn()

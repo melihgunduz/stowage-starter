@@ -164,4 +164,9 @@ ion-card-content {
   display: flex;
   flex-direction: column;
 }
+
+ion-select {
+  --placeholder-color: black;
+  --placeholder-opacity: 80%;
+}
 </style>
