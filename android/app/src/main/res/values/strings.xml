@@ -2,6 +2,6 @@
 <resources>
     <string name="app_name">stowage-starter</string>
     <string name="title_activity_main">stowage-starter</string>
-    <string name="package_name">io.ionic.starter</string>
-    <string name="custom_url_scheme">io.ionic.starter</string>
+    <string name="package_name">io.stowage.starter</string>
+    <string name="custom_url_scheme">io.stowage.starter</string>
 </resources>

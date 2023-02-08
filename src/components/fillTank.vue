@@ -25,7 +25,8 @@
 
 
 
-
+  let fullVolume = 0
+  let newFullVolume = 0
   const $router = useRouter()
   const loadValue = ref(0)
 
@@ -66,11 +67,22 @@
 
   const onIonChange = ({detail}:any) => {
     loadValue.value = detail.value
+
+    let newWeight = NaN;
+    if (selectedTank.value.weight === 0) {
+      newWeight = (selectedTank.value.capacity * (loadValue.value/100)) * selectedTank.value.goodDensity
+    } else {
+      const emptyVolume = selectedTank.value.capacity - selectedTank.value.capacity * (selectedTank.value.fullness/100)
+      newWeight = selectedTank.value.weight + ((emptyVolume * loadValue.value/100) * selectedTank.value.goodDensity)
+    }
+
+    newFullVolume = Number((newWeight / selectedTank.value.goodDensity).toFixed(2))
   }
 
 
   const changed = ({detail}:any) => {
     selectedTank.value = detail.value
+    fullVolume = selectedTank.value.weight / selectedTank.value.goodDensity
 
   }
 
@@ -85,6 +97,7 @@
     await toast.present();
   }
 
+
   const loadTank = () => {
     let newWeight = NaN;
     if (selectedTank.value.weight === 0) {
@@ -93,7 +106,7 @@
       const emptyVolume = selectedTank.value.capacity - selectedTank.value.capacity * (selectedTank.value.fullness/100)
       newWeight = selectedTank.value.weight + ((emptyVolume * loadValue.value/100) * selectedTank.value.goodDensity)
     }
-    const newFullVolume = newWeight / selectedTank.value.goodDensity
+    // newFullVolume = newWeight / selectedTank.value.goodDensity
     const newFullness = (newFullVolume / selectedTank.value.capacity)*100
 
     const query_1 = "UPDATE tank_table SET fullness = ? WHERE tankName = ?;"
@@ -170,13 +183,18 @@
         </ion-card-title>
       </ion-card-header>
       <ion-card-content v-if="selectedTank.tankName !==null || ''">
-        <ion-text>Tank Adı: {{ selectedTank.tankName }}</ion-text>
-        <ion-text>Tank Numarası: {{ selectedTank.tankNumber }}</ion-text>
-        <ion-text>Parsel Numarası: {{ selectedTank.parcelNumber }}</ion-text>
-        <ion-text>Yük: {{ selectedTank.cargo }}</ion-text>
-        <ion-text>Kapasite: {{ selectedTank.capacity }} m3</ion-text>
-        <ion-text>Doluluk: {{ selectedTank.fullness }} %</ion-text>
-        <ion-text>Ağırlık: {{ selectedTank.weight }} kg</ion-text>
+        <div id="left">
+          <ion-text>Tank Adı: {{ selectedTank.tankName }}</ion-text>
+          <ion-text>Tank Numarası: {{ selectedTank.tankNumber }}</ion-text>
+          <ion-text>Parsel Numarası: {{ selectedTank.parcelNumber }}</ion-text>
+          <ion-text>Yük: {{ selectedTank.cargo }}</ion-text>
+          <ion-text>Kapasite: {{ selectedTank.capacity }} m3</ion-text>
+          <ion-text>Doluluk: {{ selectedTank.fullness }}%</ion-text>
+          <ion-text>Ağırlık: {{ selectedTank.weight }} kg</ion-text>
+        </div>
+        <div id="right">
+          <ion-text>Dolu Hacim: {{fullVolume}} m3</ion-text>
+        </div>
       </ion-card-content>
       <ion-card-content v-else>
         <ion-text>Tank bilgisi için tank seçimi yapın</ion-text>
@@ -194,6 +212,7 @@
           <ion-text slot="end">100%</ion-text>
         </ion-range>
         <ion-text>Doldurulan: {{loadValue}}%</ion-text>
+        <ion-text>Tanklar maksimum 98% yüklenebilir</ion-text>
       </ion-card-content>
     </ion-card>
   </ion-content>
@@ -209,10 +228,26 @@ ion-card {
   box-shadow: none;
 }
 
-ion-card-content {
+ion-card-content{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+#left {
   display: flex;
   flex-direction: column;
 }
+
+#right {
+  display: flex;
+  flex-direction: column;
+}
+#right ion-text{
+  justify-content: flex-end;
+}
+
 
 ion-select {
   --placeholder-color: black;

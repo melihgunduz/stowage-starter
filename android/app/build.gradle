@@ -2,10 +2,10 @@ apply plugin: 'com.android.application'
 
 android {
 
-    namespace 'io.ionic.starter'
+    namespace 'io.stowage.starter'
     compileSdk compileSdkVersion
     defaultConfig {
-        applicationId "io.ionic.starter"
+        applicationId "io.stowage.starter"
         minSdkVersion 29
         targetSdkVersion 33
         compileSdkVersion 33

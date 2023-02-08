@@ -15,30 +15,29 @@
         }
         await db.open();
 
-     // tablo oluşturma query'si her bağlantı oluşturma isteğinde çalıştırılıyor
-    //  bunun önüne geçmek istenirse query farklı bir yerde çalıştırılabilir
-    const query = `
-     CREATE TABLE IF NOT EXISTS tank_table (
-      tankName TEXT,
-      tankNumber INTEGER,
-      parcelNumber INTEGER,
-      cargo TEXT,
-      capacity INTEGER,
-      fullness INTEGER,
-      weight INTEGER,
-      goodDensity INTEGER
-    );
-    CREATE TABLE IF NOT EXISTS goods_table (
-      goodName TEXT,
-      goodNumber INTEGER,
-      density INTEGER
-    );
-    `
-    const res = await db.execute(query);
-    if(res.changes && res.changes.changes && res.changes.changes < 0) {
-        new Error(`Error: execute failed`);
-    }
 
+        // Crate tables
+        const query = `
+         CREATE TABLE IF NOT EXISTS tank_table (
+          tankName TEXT,
+          tankNumber INTEGER,
+          parcelNumber INTEGER,
+          cargo TEXT,
+          capacity INTEGER,
+          fullness INTEGER,
+          weight INTEGER,
+          goodDensity INTEGER
+        );
+        CREATE TABLE IF NOT EXISTS goods_table (
+          goodName TEXT,
+          goodNumber INTEGER,
+          density INTEGER
+        );
+        `
+        const res = await db.execute(query);
+        if(res.changes && res.changes.changes && res.changes.changes < 0) {
+            new Error(`Error: execute failed`);
+        }
     } catch (e) {
         alert('Veritabanı Hatası')
         console.log(e)

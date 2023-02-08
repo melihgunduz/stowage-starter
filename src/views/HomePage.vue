@@ -64,7 +64,7 @@
 
   </ion-header>
 
-  <ion-content v-if="tanks.length > 0">
+  <ion-content :fullscreen="true" v-if="tanks.length > 0">
     <ion-refresher slot="fixed" @ionRefresh="refreshData($event)" >
       <ion-refresher-content
           refreshing-spinner="circles"
