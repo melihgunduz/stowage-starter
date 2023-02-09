@@ -70,14 +70,14 @@
   }
 
 
-  const changed = ({detail}:any) => {
+  const tankChanged = ({detail}:any) => {
     selectedTank.value = detail.value
     filledVolume = Number((selectedTank.value.weight / selectedTank.value.goodDensity).toFixed(2))
     canBeFilledVolume.value = Number(((selectedTank.value.capacity*98/100) - filledVolume).toFixed(2))
     newFullness.value = Number((selectedTank.value.fullness).toFixed(2))
   }
 
-  const onIonChange = ({detail}:any) => {
+  const onRangeChanged = ({detail}:any) => {
     loadValue.value = detail.value
 
     if (selectedTank.value.weight === 0) {
@@ -165,7 +165,7 @@
         </ion-card-title>
       </ion-card-header>
       <ion-card-content class="ion-no-padding ion-padding-vertical">
-        <ion-select @ionChange="changed" ok-text="Tank Seç" cancel-text="İptal" class="ion-padding" placeholder="Doldurulacak Tankı Seçiniz">
+        <ion-select @ionChange="tankChanged" ok-text="Tank Seç" cancel-text="İptal" class="ion-padding" placeholder="Doldurulacak Tankı Seçiniz">
           <ion-select-option :disabled="tank.fullness > 50" v-for="tank in tanks" :key="tank" :value="tank">{{tank.tankName}}</ion-select-option>
 
         </ion-select>
@@ -189,9 +189,6 @@
         <div id="right">
           <ion-text>Doluluk: <ion-text color="success">{{ (selectedTank.fullness).toFixed(2) }}%</ion-text></ion-text>
           <ion-text>Dolu Hacim: <ion-text color="success">{{filledVolume}} m3</ion-text></ion-text>
-
-<!--          doldurulabilir hacim deponun toplam hacminin 98% sine göre hesaplanacak-->
-<!--          yeni tank doluluğu range altına eklenecek-->
           <ion-text>Doldurulabilir Hacim: <ion-text color="success">{{((selectedTank.capacity*98/100) - filledVolume).toFixed(2)}} m3</ion-text></ion-text>
         </div>
       </ion-card-content>
@@ -207,7 +204,7 @@
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-range @ionChange="onIonChange" class="ion-no-padding" :pin="true">
+        <ion-range @ionChange="onRangeChanged" class="ion-no-padding" :pin="true">
           <ion-text slot="start">0%</ion-text>
           <ion-text slot="end">100%</ion-text>
         </ion-range>
