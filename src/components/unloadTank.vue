@@ -86,15 +86,13 @@ import {onMounted, ref} from "vue";
   }
 
   const unloadTank = () => {
-
-    const newWeight = selectedTank.value.weight - (selectedTank.value.weight * (unloadValue.value / 100))
-    const newFullVolume = newWeight / selectedTank.value.goodDensity
-    const newFullness = ( (newFullVolume) / selectedTank.value.capacity)*100
-    // const newFullness = ((selectedTank.value.fullness - (selectedTank.value.fullness*unloadValue.value/100)))
+    const filledVolume = selectedTank.value.capacity * selectedTank.value.fullness/100
+    const newFilledVolume = filledVolume - (filledVolume * unloadValue.value/100)
+    const newFullness = ((newFilledVolume) / selectedTank.value.capacity)*100
+    const newWeight = (newFilledVolume * selectedTank.value.goodDensity)
     const query_1 = "UPDATE tank_table SET fullness = ? WHERE tankName = ?;"
     const query_2 ="UPDATE tank_table SET weight = ? WHERE tankName = ?;"
     db.run(query_1,[`${newFullness}`,`${selectedTank.value.tankName}`])
-    // db.run(query_1,[`${selectedTank.value.fullness - (selectedTank.value.fullness*unloadValue.value/100)}`,`${selectedTank.value.tankName}`])
     db.run(query_2,[`${newWeight}`,`${selectedTank.value.tankName}`])
   }
 
