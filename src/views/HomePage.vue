@@ -13,7 +13,8 @@
     cargo: null,
     capacity: NaN,
     fullness: NaN,
-    weight:NaN
+    weight:NaN,
+    goodDensity: NaN,
   }])
   const getTanks = async (refresh:boolean) => {
 
@@ -84,15 +85,21 @@
               </ion-card-subtitle>
             </ion-card-header>
             <ion-card-content class="ion-padding-horizontal">
-              <ion-label>
-                Yük: {{ tank.cargo }}
-              </ion-label>
-              <ion-label>
-                Doluluk: {{ tank.fullness }}%
-              </ion-label>
-              <ion-label>
-                Ağırlık: {{ tank.weight }} kg
-              </ion-label>
+              <ion-text>
+                Yük: <ion-text class="data-text">{{ tank.cargo }}</ion-text>
+              </ion-text>
+              <ion-text>
+                Doluluk: <ion-text class="data-text">{{ tank.fullness }}%</ion-text>
+              </ion-text>
+              <ion-text>
+                Hacim: <ion-text class="data-text">{{ tank.capacity }} m3</ion-text>
+              </ion-text>
+              <ion-text>
+                Dolu Hacim: <ion-text class="data-text">{{ (tank.weight / tank.goodDensity).toFixed(2) }} m3</ion-text>
+              </ion-text>
+              <ion-text>
+                Ağırlık: <ion-text class="data-text">{{ (tank.weight).toFixed(2) }} kg</ion-text>
+              </ion-text>
             </ion-card-content>
           </ion-card>
         </ion-col>
@@ -114,13 +121,10 @@
 ion-card-content {
   display: flex;
   flex-direction: column;
+  padding-bottom: 0;
 }
 
-#container {
-  text-align: center;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
+ion-card-content .data-text {
+  color: #fab510;
 }
 </style>
