@@ -26,6 +26,9 @@ import {onMounted, ref} from "vue";
 
 
 
+  const filledVolume = ref(NaN);
+  const currentUnloadedVolume = ref(0);
+
   const $router = useRouter()
   const unloadValue = ref(0)
 
@@ -66,11 +69,14 @@ import {onMounted, ref} from "vue";
 
   const onIonChange = ({detail}:any) => {
     unloadValue.value = detail.value
+    currentUnloadedVolume.value = Number((filledVolume.value*unloadValue.value/100).toFixed(2))
   }
 
 
   const changed = ({detail}:any) => {
     selectedTank.value = detail.value
+
+    filledVolume.value = Number((selectedTank.value.capacity * selectedTank.value.fullness/100).toFixed(2))
 
   }
 
@@ -86,8 +92,7 @@ import {onMounted, ref} from "vue";
   }
 
   const unloadTank = () => {
-    const filledVolume = selectedTank.value.capacity * selectedTank.value.fullness/100
-    const newFilledVolume = filledVolume - (filledVolume * unloadValue.value/100)
+    const newFilledVolume = filledVolume.value - (filledVolume.value * unloadValue.value/100)
     const newFullness = ((newFilledVolume) / selectedTank.value.capacity)*100
     const newWeight = (newFilledVolume * selectedTank.value.goodDensity)
     const query_1 = "UPDATE tank_table SET fullness = ? WHERE tankName = ?;"
@@ -156,21 +161,27 @@ import {onMounted, ref} from "vue";
         </ion-select>
       </ion-card-content>
     </ion-card>
-    <ion-card color="tank_info_box" class="ion-no-margin ion-margin-top">
+    <ion-card id="info-card" color="tank_info_box" class="ion-no-margin ion-margin-top">
       <ion-card-header>
         <ion-card-title>
           Tank Bilgileri
         </ion-card-title>
       </ion-card-header>
       <ion-card-content v-if="selectedTank.tankName !==null || ''">
-          <ion-text>Tank Adı: {{ selectedTank.tankName }}</ion-text>
-          <ion-text>Tank Numarası: {{ selectedTank.tankNumber }}</ion-text>
-          <ion-text>Parsel Numarası: {{ selectedTank.parcelNumber }}</ion-text>
-          <ion-text>Yük: {{ selectedTank.cargo }}</ion-text>
-          <ion-text>Kapasite: {{ selectedTank.capacity }} m3</ion-text>
-          <ion-text>Doluluk: {{ selectedTank.fullness }} %</ion-text>
-          <ion-text>Ağırlık: {{ selectedTank.weight }} kg</ion-text>
+        <div id="left">
+          <ion-text>Tank Adı: <ion-text color="success">{{ selectedTank.tankName }}</ion-text></ion-text>
+          <ion-text>Tank Numarası: <ion-text color="success">{{ selectedTank.tankNumber }}</ion-text></ion-text>
+          <ion-text>Parsel Numarası: <ion-text color="success">{{ selectedTank.parcelNumber }}</ion-text></ion-text>
+          <ion-text>Yük: <ion-text color="success">{{ selectedTank.cargo }}</ion-text></ion-text>
+        </div>
+        <div id="right">
+          <ion-text>Kapasite: <ion-text color="success">{{ selectedTank.capacity }} m3</ion-text></ion-text>
+          <ion-text>Dolu Hacim: <ion-text color="success">{{filledVolume}} m3</ion-text></ion-text>
+          <ion-text>Ağırlık: <ion-text color="success">{{ selectedTank.weight.toFixed(2) }} kg</ion-text></ion-text>
+          <ion-text>Doluluk: <ion-text color="success">{{ (selectedTank.fullness).toFixed(2) }}%</ion-text></ion-text>
+        </div>
       </ion-card-content>
+
       <ion-card-content v-else>
         <ion-text>Tank bilgisi için tank seçimi yapın</ion-text>
       </ion-card-content>
@@ -186,7 +197,7 @@ import {onMounted, ref} from "vue";
           <ion-text slot="start">0%</ion-text>
           <ion-text slot="end">100%</ion-text>
         </ion-range>
-        <ion-text>Boşaltılan: {{unloadValue}}%</ion-text>
+        <ion-text>Boşaltılan: {{unloadValue}}%, {{currentUnloadedVolume}} m3</ion-text>
       </ion-card-content>
     </ion-card>
   </ion-content>
@@ -205,6 +216,25 @@ ion-card {
 ion-card-content {
   display: flex;
   flex-direction: column;
+}
+#info-card ion-card-content {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+#left {
+  display: flex;
+  flex-direction: column;
+}
+
+#right {
+  display: flex;
+  flex-direction: column;
+}
+#right ion-text{
+  justify-content: flex-end;
 }
 
 ion-select {
