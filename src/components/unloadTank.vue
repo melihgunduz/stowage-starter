@@ -19,11 +19,10 @@
     IonCardContent,
     toastController, alertController
   } from "@ionic/vue";
-import {createConn,db} from "@/helpers/dataBaseConnection"
-import {onMounted, ref} from "vue";
+  import {createConn,db} from "@/helpers/dataBaseConnection"
+  import {onMounted, ref} from "vue";
   import {useRouter} from "vue-router";
-
-
+  import {getTanks} from "@/helpers/getTanksFromDb";
 
 
   const filledVolume = ref(NaN);
@@ -53,19 +52,6 @@ import {onMounted, ref} from "vue";
     weight:NaN,
     goodDensity: NaN
   })
-  const getTanks = async () => {
-    try {
-      const query = 'SELECT * FROM tank_table'
-      const test = await db.query(query) //use db.query when use SELECT
-      const jso = JSON.stringify(test)
-      const obj = JSON.parse(jso)
-      tanks.value = obj.values
-
-    } catch (e) {
-      alert('error getting table')
-      console.log(e)
-    }
-  }
 
   const onIonChange = ({detail}:any) => {
     unloadValue.value = detail.value
@@ -133,7 +119,9 @@ import {onMounted, ref} from "vue";
 
   onMounted(async () => {
     await createConn()
-    await getTanks()
+    await getTanks().then((val) => {
+      tanks.value = val
+    })
   })
 
 

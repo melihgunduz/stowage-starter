@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle, IonGrid, IonRow, IonCol, IonText, IonLabel, IonIcon, IonRefresher, IonRefresherContent, IonButtons, IonButton} from '@ionic/vue';
+  import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle, IonGrid, IonRow, IonCol, IonText, IonIcon, IonRefresher, IonRefresherContent, IonButtons, IonButton} from '@ionic/vue';
   import {onMounted, ref} from "vue";
   import {createConn, db} from "@/helpers/dataBaseConnection";
   import {refreshCircleOutline} from "ionicons/icons";
@@ -123,6 +123,7 @@ ion-card-content {
   flex-direction: column;
   padding-bottom: 0;
 }
+
 
 ion-card-content .data-text {
   color: #fab510;
