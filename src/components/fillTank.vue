@@ -19,10 +19,9 @@
     IonCardContent,
     toastController, alertController
   } from "@ionic/vue";
-  import {createConn,db} from "@/helpers/dataBaseConnection"
+  import {createConn,db,getTanks} from "@/helpers/dataBaseFunctions"
   import {onMounted, ref} from "vue";
   import {useRouter} from "vue-router";
-  import {getTanks} from "@/helpers/getTanksFromDb";
 
 
   let filledVolume = 0
@@ -112,6 +111,9 @@
   }
 
   const prepareLoad = async () => {
+    // if(newFullVolume < 50) {
+    //
+    // }
     const emptyVolume = selectedTank.value.capacity - selectedTank.value.capacity * (selectedTank.value.fullness/100) // kalan hacim
     const alert = await alertController.create({
       header: 'Uyarı',

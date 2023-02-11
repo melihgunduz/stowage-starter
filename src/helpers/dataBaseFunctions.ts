@@ -1,9 +1,8 @@
-    import {CapacitorSQLite, SQLiteConnection, SQLiteDBConnection} from "@capacitor-community/sqlite";
+import {CapacitorSQLite, SQLiteConnection, SQLiteDBConnection} from "@capacitor-community/sqlite";
 
-    const sqlite = new SQLiteConnection(CapacitorSQLite);
-    export let db: SQLiteDBConnection;
-
-    export const createConn = async () => {
+const sqlite = new SQLiteConnection(CapacitorSQLite);
+export let db: SQLiteDBConnection;
+export const createConn = async () => {
     try {
         const ret = await sqlite.checkConnectionsConsistency();
         const isConn = (await sqlite.isConnection("db_tab3", false)).result;
@@ -14,7 +13,6 @@
             db = await sqlite.createConnection("db_tab3", false, "no-encryption", 1, false);
         }
         await db.open();
-
 
         // Crate tables
         const query = `
@@ -43,3 +41,17 @@
         console.log(e)
     }
  }
+
+export const getTanks = async () => {
+    try {
+        const query = 'SELECT * FROM tank_table'
+        const test = await db.query(query) //use db.query when use SELECT
+        const jso = JSON.stringify(test)
+        const obj = JSON.parse(jso)
+        return obj.values
+
+    } catch (e) {
+        alert('error getting table')
+        console.log(e)
+    }
+}

@@ -19,10 +19,9 @@
     IonCardContent,
     toastController, alertController
   } from "@ionic/vue";
-  import {createConn,db} from "@/helpers/dataBaseConnection"
+  import {createConn,db,getTanks} from "@/helpers/dataBaseFunctions"
   import {onMounted, ref} from "vue";
   import {useRouter} from "vue-router";
-  import {getTanks} from "@/helpers/getTanksFromDb";
 
 
   const filledVolume = ref(NaN);

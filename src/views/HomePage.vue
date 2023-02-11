@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle, IonGrid, IonRow, IonCol, IonText, IonIcon, IonRefresher, IonRefresherContent, IonButtons, IonButton} from '@ionic/vue';
   import {onMounted, ref} from "vue";
-  import {createConn, db} from "@/helpers/dataBaseConnection";
+  import {createConn, db} from "@/helpers/dataBaseFunctions";
   import {refreshCircleOutline} from "ionicons/icons";
 
 

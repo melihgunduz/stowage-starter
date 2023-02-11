@@ -19,7 +19,7 @@
     toastController, alertController
   } from "@ionic/vue";
   import {onMounted, ref} from "vue"
-  import {createConn, db} from '@/helpers/dataBaseConnection'
+  import {createConn, db} from '@/helpers/dataBaseFunctions'
   import {useRouter} from "vue-router";
 
 
