@@ -22,6 +22,7 @@
   import {createConn,db,getTanks} from "@/helpers/dataBaseFunctions"
   import {onMounted, ref} from "vue";
   import {useRouter} from "vue-router";
+  import {appConfirmController} from "@/helpers/reactionController";
 
 
   let filledVolume = 0
@@ -54,19 +55,6 @@
     weight:NaN,
     goodDensity: NaN
   })
-  // const getTanks = async () => {
-  //   try {
-  //     const query = 'SELECT * FROM tank_table'
-  //     const test = await db.query(query) //use db.query when use SELECT
-  //     const jso = JSON.stringify(test)
-  //     const obj = JSON.parse(jso)
-  //     tanks.value = obj.values
-  //
-  //   } catch (e) {
-  //     alert('error getting table')
-  //     console.log(e)
-  //   }
-  // }
 
 
   const tankChanged = ({detail}:any) => {
@@ -111,35 +99,27 @@
   }
 
   const prepareLoad = async () => {
-    // if(newFullVolume < 50) {
-    //
+    // if(newFullness.value < 50) {
+    //   const alert = await alertController.create({
+    //     header: 'test'
+    //   })
+    //   await alert.present();
     // }
     const emptyVolume = selectedTank.value.capacity - selectedTank.value.capacity * (selectedTank.value.fullness/100) // kalan hacim
-    const alert = await alertController.create({
-      header: 'Uyarı',
-      backdropDismiss : false,
-      message: `Seçilen tank ${loadValue.value}% (${((emptyVolume * loadValue.value/100) * selectedTank.value.goodDensity).toFixed(2)}kg, ${newFullVolume}m3) doldurulacak. Onaylıyor musunuz?`,
-      buttons: [
-        {
-          text: 'Vazgeç',
-          role: 'cancel',
-        },
-        {
-          text: 'Onayla',
-          role: 'confirm',
-          handler: async () => {
+    await appConfirmController('Uyarı',
+        `Seçilen tank ${loadValue.value}% (${((emptyVolume * loadValue.value / 100) * selectedTank.value.goodDensity).toFixed(2)}kg, ${newFullVolume}m3) doldurulacak. Onaylıyor musunuz?`)
+        .then( async (val) => {
+          if (val === 'confirm') {
             try {
-              await loadTank();
-              await presentToast();
-              await $router.replace({name: 'Management'});
-            }catch (e){
+               await loadTank();
+               await presentToast();
+               await $router.replace({name: 'Management'});
+            } catch (e) {
+              alert('fonksiyonlar başarısız oldu')
               console.log(e)
             }
           }
-        },
-      ],
-    });
-    await alert.present();
+        })
   }
 
   onMounted(async () => {
