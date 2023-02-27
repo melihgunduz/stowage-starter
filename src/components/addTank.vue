@@ -59,7 +59,8 @@
     cargo: null,
     capacity: NaN,
     fullness: NaN,
-    weight:NaN
+    weight:NaN,
+    tankGroup: null
   }])
 
   const getGoods = async () => {
@@ -82,7 +83,8 @@
     parcel: null,
     cargo: null,
     capacity: NaN,
-    fullness: 100,
+    fullness: Number((100).toFixed(2)),
+    tankGroup : null
   })
 
   const goodDensity = ref(NaN);
@@ -90,6 +92,10 @@
   const changed = (event:any) => {
     tankProperties.value.cargo = event.target.value.goodName
     goodDensity.value = event.target.value.density
+  }
+
+  const groupChanged = (event:any) => {
+    tankProperties.value.tankGroup = event.detail.value
   }
 
   onMounted(  async () => {
@@ -106,7 +112,7 @@
         const query_1 = `INSERT INTO tank_table VALUES('${tankProperties.value.name}',
         ${tankProperties.value.number},${tankProperties.value.parcel},'${tankProperties.value.cargo}',
         ${tankProperties.value.capacity},${tankProperties.value.fullness},
-        ${(goodDensity.value)  * tankProperties.value.capacity }, ${goodDensity.value})`
+        ${(goodDensity.value)  * tankProperties.value.capacity }, ${goodDensity.value},'${tankProperties.value.tankGroup}')`
 
         await db.execute(query_1,false)
         await presentToast();
@@ -133,7 +139,7 @@
           const query_1 = `INSERT INTO tank_table VALUES('${tankProperties.value.name}',
         ${tankProperties.value.number},${tankProperties.value.parcel},'${tankProperties.value.cargo}',
         ${tankProperties.value.capacity},${tankProperties.value.fullness},
-        ${(goodDensity.value)  * tankProperties.value.capacity },${goodDensity.value})`
+        ${(goodDensity.value)  * tankProperties.value.capacity },${goodDensity.value},'${tankProperties.value.tankGroup}')`
 
           await db.execute(query_1,false)
           canBeAdded.value = false
@@ -178,6 +184,13 @@
         <ion-item>
           <ion-label position="stacked">Tank Parseli</ion-label>
           <ion-input color="inputColor" v-model="tankProperties.parcel" placeholder="Tank Parselini Girin" type="number"/>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Tank Grubu</ion-label>
+          <ion-select @ionChange="groupChanged" ok-text="Grup Seç" cancel-text="İptal" placeholder="Yerleştirilecek Grubu Seçiniz">
+            <ion-select-option value="S">S</ion-select-option>
+            <ion-select-option value="P">P</ion-select-option>
+          </ion-select>
         </ion-item>
         <ion-item>
           <ion-label position="stacked">Yük</ion-label>

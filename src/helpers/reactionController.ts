@@ -32,7 +32,7 @@ export const appConfirmController = (header:string,message:string) => {
         roleMessage.value = `${role}`;
         return roleMessage.value
     };
-    const foo = new Promise((resolve, reject) => {
+    const foo = new Promise((resolve) => {
         presentAlert().then(value => resolve(value))
     });
 

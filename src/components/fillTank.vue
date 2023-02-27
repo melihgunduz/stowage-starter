@@ -99,27 +99,29 @@
   }
 
   const prepareLoad = async () => {
-    // if(newFullness.value < 50) {
-    //   const alert = await alertController.create({
-    //     header: 'test'
-    //   })
-    //   await alert.present();
-    // }
     const emptyVolume = selectedTank.value.capacity - selectedTank.value.capacity * (selectedTank.value.fullness/100) // kalan hacim
-    await appConfirmController('Uyarı',
-        `Seçilen tank ${loadValue.value}% (${((emptyVolume * loadValue.value / 100) * selectedTank.value.goodDensity).toFixed(2)}kg, ${newFullVolume}m3) doldurulacak. Onaylıyor musunuz?`)
-        .then( async (val) => {
-          if (val === 'confirm') {
-            try {
-               await loadTank();
-               await presentToast();
-               await $router.replace({name: 'Management'});
-            } catch (e) {
-              alert('fonksiyonlar başarısız oldu')
-              console.log(e)
+    if(newFullness.value < 50) {
+      const alert = await alertController.create({
+        header: 'test'
+      })
+      await alert.present();
+    } else {
+      await appConfirmController('Uyarı',
+          `Seçilen tank ${loadValue.value}% (${((emptyVolume * loadValue.value / 100) * selectedTank.value.goodDensity).toFixed(2)}kg, ${newFullVolume}m3) doldurulacak. Onaylıyor musunuz?`)
+          .then( async (val) => {
+            if (val === 'confirm') {
+              try {
+                await loadTank();
+                await presentToast();
+                await $router.replace({name: 'Management'});
+              } catch (e) {
+                alert('fonksiyonlar başarısız oldu')
+                console.log(e)
+              }
             }
-          }
-        })
+          })
+    }
+
   }
 
   onMounted(async () => {
@@ -150,7 +152,7 @@
       </ion-card-header>
       <ion-card-content class="ion-no-padding ion-padding-vertical">
         <ion-select @ionChange="tankChanged" ok-text="Tank Seç" cancel-text="İptal" class="ion-padding" placeholder="Doldurulacak Tankı Seçiniz">
-          <ion-select-option :disabled="tank.fullness > 50" v-for="tank in tanks" :key="tank" :value="tank">{{tank.tankName}}</ion-select-option>
+          <ion-select-option v-for="tank in tanks" :key="tank" :value="tank">{{tank.tankName}}</ion-select-option>
 
         </ion-select>
       </ion-card-content>

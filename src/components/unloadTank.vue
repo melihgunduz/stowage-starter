@@ -82,7 +82,7 @@
     const newWeight = (newFilledVolume * selectedTank.value.goodDensity)
     const query_1 = "UPDATE tank_table SET fullness = ? WHERE tankName = ?;"
     const query_2 ="UPDATE tank_table SET weight = ? WHERE tankName = ?;"
-    db.run(query_1,[`${newFullness}`,`${selectedTank.value.tankName}`])
+    db.run(query_1,[`${Number((newFullness).toFixed(2))}`,`${selectedTank.value.tankName}`])
     db.run(query_2,[`${newWeight}`,`${selectedTank.value.tankName}`])
   }
 

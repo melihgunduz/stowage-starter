@@ -24,7 +24,8 @@ export const createConn = async () => {
           capacity INTEGER,
           fullness INTEGER,
           weight INTEGER,
-          goodDensity INTEGER
+          goodDensity INTEGER,
+          tankGroup TEXT
         );
         CREATE TABLE IF NOT EXISTS goods_table (
           goodName TEXT,
