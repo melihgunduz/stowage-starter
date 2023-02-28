@@ -22,7 +22,8 @@
   import {createConn,db,getTanks} from "@/helpers/dataBaseFunctions"
   import {onMounted, ref} from "vue";
   import {useRouter} from "vue-router";
-  import {appConfirmController} from "@/helpers/reactionController";
+  import {appAlertController} from "@/helpers/alertController";
+  import {checkGroupsWeight} from "@/helpers/groupWeightController";
 
 
   let filledVolume = 0
@@ -106,7 +107,7 @@
       })
       await alert.present();
     } else {
-      await appConfirmController('Uyarı',
+      await appAlertController('Uyarı',
           `Seçilen tank ${loadValue.value}% (${((emptyVolume * loadValue.value / 100) * selectedTank.value.goodDensity).toFixed(2)}kg, ${newFullVolume}m3) doldurulacak. Onaylıyor musunuz?`)
           .then( async (val) => {
             if (val === 'confirm') {
@@ -129,10 +130,11 @@
     await getTanks().then((val) => {
       tanks.value = val
     })
+    await checkGroupsWeight()
   })
 
-
 </script>
+
 <template>
 <ion-page>
   <ion-header>

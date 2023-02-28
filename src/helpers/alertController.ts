@@ -2,7 +2,7 @@ import {alertController} from "@ionic/vue";
 import {ref} from "vue";
 
 
-export const appConfirmController = (header:string,message:string) => {
+export const appAlertController = (header:string,message:string) => {
     const presentAlert = async () => {
         const status = ref('');
         const roleMessage = ref('');
