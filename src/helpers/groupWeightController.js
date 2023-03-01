@@ -1,13 +1,7 @@
 import { useGroupsWeightStore } from '@/stores/groupsWeightStore'
 import {db} from "@/helpers/dataBaseFunctions";
-import {reactive} from "vue";
-import {computed} from "vue";
+import {computed, ref} from "vue";
 
-
-
-const numbers = reactive({
-    weight : [],
-})
 
 const runQueryS = async () => {
     const query = "SELECT weight FROM tank_table WHERE tankGroup = 'S'"
@@ -27,31 +21,51 @@ export const setGroupsWeight = async () => {
     const store = useGroupsWeightStore();
     try {
         await runQueryS().then((val) => {
-            console.log(val)
             store.setGroupS(val)
         })
 
         await runQueryP().then((val) => {
             store.setGroupP(val)
-            console.log()
         })
-        // return numbers.weight //dizi dönüyor içinde .weight var
     } catch (e) {
         alert('error setting weight')
         console.log(e)
     }
 };
-export const getGroupsWeight = async () =>{
+
+// Group S
+export const getGroupS = async () => {
     const store = useGroupsWeightStore();
     try {
+        const groupSWeight = ref(0);
         const groupS = computed(() => store.getGroupS())
-        if (!(groupS.value[0] === undefined))
-        console.log(groupS.value[0].weight)
+        if (groupS.value.length === 0) {
+            return 0
+        } else {
+            for (let i = 0; i < groupS.value.length; i++) {
+                groupSWeight.value += groupS.value[i].weight
+            }
+            return groupSWeight.value
+        }
+    } catch (e) {
+        console.log(e)
+    }
+}
 
+//Group P
+export const getGroupP = async () => {
+    const store = useGroupsWeightStore();
+    try {
+        const groupPWeight = ref(0);
         const groupP = computed(() => store.getGroupP())
-        if (!(groupP.value[0] === undefined))
-        console.log(groupP.value[0].weight)
-
+        if (groupP.value.length === 0) {
+            return 0
+        } else {
+            for (let i = 0; i < groupP.value.length; i++) {
+                groupPWeight.value += groupP.value[i].weight
+            }
+            return groupPWeight.value
+        }
     } catch (e) {
         alert('error getting weight')
         console.log(e)
@@ -59,4 +73,4 @@ export const getGroupsWeight = async () =>{
 }
 
 
-
+// TODO: ağırlık karşılaştırmaları bu dosyada yapılacak. fonksiyonlar gerekirse birleştirilecek

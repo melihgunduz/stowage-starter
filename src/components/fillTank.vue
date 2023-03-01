@@ -23,7 +23,7 @@
   import { onMounted, ref} from "vue";
   import {useRouter} from "vue-router";
   import {appAlertController} from "@/helpers/alertController";
-  import {setGroupsWeight, getGroupsWeight} from "@/helpers/groupWeightController"
+  import { setGroupsWeight, getGroupS, getGroupP} from "@/helpers/groupWeightController"
 
   let filledVolume = 0
   let newFullVolume = 0
@@ -130,7 +130,8 @@
       tanks.value = val
     })
     await setGroupsWeight();
-    await getGroupsWeight();
+    await getGroupS().then((val) => console.log(val));
+    await getGroupP().then((val) => console.log(val));
 
   })
 
