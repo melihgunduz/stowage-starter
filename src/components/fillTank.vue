@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
   import {
     IonPage,
     IonHeader,
@@ -20,18 +20,10 @@
     toastController, alertController
   } from "@ionic/vue";
   import {createConn,db,getTanks} from "@/helpers/dataBaseFunctions"
-  import {computed, onMounted, ref} from "vue";
+  import { onMounted, ref} from "vue";
   import {useRouter} from "vue-router";
   import {appAlertController} from "@/helpers/alertController";
-  import {checkGroupsWeight} from "@/helpers/groupWeightController";
-  //     eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //     @ts-ignore
-  import { useGroupsWeightStore } from '@/stores/groupsWeightStore'
-
-  const store = useGroupsWeightStore()
-
-
-
+  import {setGroupsWeight, getGroupsWeight} from "@/helpers/groupWeightController"
 
   let filledVolume = 0
   let newFullVolume = 0
@@ -65,14 +57,14 @@
   })
 
 
-  const tankChanged = ({detail}:any) => {
+  const tankChanged = ({detail}) => {
     selectedTank.value = detail.value
     filledVolume = Number((selectedTank.value.weight / selectedTank.value.goodDensity).toFixed(2))
     canBeFilledVolume.value = Number(((selectedTank.value.capacity*98/100) - filledVolume).toFixed(2))
     newFullness.value = Number((selectedTank.value.fullness).toFixed(2))
   }
 
-  const onRangeChanged = ({detail}:any) => {
+  const onRangeChanged = ({detail}) => {
     loadValue.value = detail.value
 
     if (selectedTank.value.weight === 0) {
@@ -137,12 +129,9 @@
     await getTanks().then((val) => {
       tanks.value = val
     })
-    await checkGroupsWeight().then((val:any) => {
-      store.setGroupS(val)
-    })
+    await setGroupsWeight();
+    await getGroupsWeight();
 
-    const groupInfo = computed(() => store.getGroupS)
-    console.log(groupInfo.value[0].weight)
   })
 
 </script>
