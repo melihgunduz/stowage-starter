@@ -20,10 +20,17 @@
     toastController, alertController
   } from "@ionic/vue";
   import {createConn,db,getTanks} from "@/helpers/dataBaseFunctions"
-  import {onMounted, ref} from "vue";
+  import {computed, onMounted, ref} from "vue";
   import {useRouter} from "vue-router";
   import {appAlertController} from "@/helpers/alertController";
   import {checkGroupsWeight} from "@/helpers/groupWeightController";
+  //     eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //     @ts-ignore
+  import { useGroupsWeightStore } from '@/stores/groupsWeightStore'
+
+  const store = useGroupsWeightStore()
+
+
 
 
   let filledVolume = 0
@@ -130,7 +137,12 @@
     await getTanks().then((val) => {
       tanks.value = val
     })
-    await checkGroupsWeight()
+    await checkGroupsWeight().then((val:any) => {
+      store.setGroupS(val)
+    })
+
+    const groupInfo = computed(() => store.getGroupS)
+    console.log(groupInfo.value[0].weight)
   })
 
 </script>

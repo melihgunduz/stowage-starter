@@ -17,6 +17,17 @@ const runQuery = async () => {
 }
 export const checkGroupsWeight = async () => {
 
+    try {
+      await  runQuery().then((val:any) => {
+            numbers.weight = val
+        })
+
+        return numbers.weight //dizi dönüyor içinde .weight var
+
+    } catch (e) {
+        alert('error getting table')
+        console.log(e)
+    }
     // try {
     //   await  runQuery().then((val:any) => {
     //         numbers.weight = val
