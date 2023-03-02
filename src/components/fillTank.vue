@@ -22,8 +22,8 @@
   import {createConn,db,getTanks} from "@/helpers/dataBaseFunctions"
   import { onMounted, ref} from "vue";
   import {useRouter} from "vue-router";
-  import {appAlertController} from "@/helpers/alertController";
-  import { setGroupsWeight, getGroupS, getGroupP} from "@/helpers/groupWeightController"
+  import {confirmAlertController} from "@/helpers/alertController";
+  import { setGroupsWeight, groupDifference} from "@/helpers/groupWeightController"
 
   let filledVolume = 0
   let newFullVolume = 0
@@ -106,7 +106,7 @@
       })
       await alert.present();
     } else {
-      await appAlertController('Uyarı',
+      await confirmAlertController('Uyarı',
           `Seçilen tank ${loadValue.value}% (${((emptyVolume * loadValue.value / 100) * selectedTank.value.goodDensity).toFixed(2)}kg, ${newFullVolume}m3) doldurulacak. Onaylıyor musunuz?`)
           .then( async (val) => {
             if (val === 'confirm') {
@@ -129,12 +129,10 @@
     await getTanks().then((val) => {
       tanks.value = val
     })
-    await setGroupsWeight();
-    await getGroupS().then((val) => console.log(val));
-    await getGroupP().then((val) => console.log(val));
+    await groupDifference();
 
   })
-
+  // TODO: tank maksimum kapasitede yüklenmiş ise yükleme yapılamayacak
 </script>
 
 <template>

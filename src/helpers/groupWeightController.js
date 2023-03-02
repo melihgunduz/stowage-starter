@@ -1,6 +1,7 @@
 import { useGroupsWeightStore } from '@/stores/groupsWeightStore'
 import {db} from "@/helpers/dataBaseFunctions";
 import {computed, ref} from "vue";
+import {infoAlertController} from "@/helpers/alertController";
 
 
 const runQueryS = async () => {
@@ -34,7 +35,7 @@ export const setGroupsWeight = async () => {
 };
 
 // Group S
-export const getGroupS = async () => {
+const getGroupS = async () => {
     const store = useGroupsWeightStore();
     try {
         const groupSWeight = ref(0);
@@ -53,7 +54,7 @@ export const getGroupS = async () => {
 }
 
 //Group P
-export const getGroupP = async () => {
+const getGroupP = async () => {
     const store = useGroupsWeightStore();
     try {
         const groupPWeight = ref(0);
@@ -70,6 +71,32 @@ export const getGroupP = async () => {
         alert('error getting weight')
         console.log(e)
     }
+}
+export const groupDifference = async (newWeight = 0, group) => {
+    await setGroupsWeight();
+    let weight1 = await getGroupS();
+    let weight2 = await getGroupP();
+    if (group === 'S') {
+        weight1 += newWeight
+    } else {
+        weight2 += newWeight
+    }
+
+
+    const difference = Math.abs(weight1 - weight2); // absolute difference between the two weights
+    const average = (weight1 + weight2) / 2; // average weight of the two weights
+    const percentage = (difference / average) * 100;
+    if (percentage > 20) {
+        if (weight1 > weight2) {
+            await infoAlertController('Grup ağırlıkları farkı 20% üzerinde', `Eklenecek yeni tank ile beraber S grubu ${Math.abs(weight1 - weight2)} kg daha ağır.`)
+        } else {
+            await infoAlertController('Grup ağırlıkları farkı 20% üzerinde', `Eklenecek yeni tank ile beraber P grubu ${Math.abs(weight1 - weight2)} kg daha ağır.`)
+        }
+        return false
+    } else {
+        return true
+    }
+
 }
 
 

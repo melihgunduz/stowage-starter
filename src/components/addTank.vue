@@ -20,6 +20,8 @@
   import {onMounted, ref} from "vue"
   import {createConn, db, getTanks} from '@/helpers/dataBaseFunctions'
   import {useRouter} from "vue-router";
+  import {groupDifference} from '@/helpers/groupWeightController.js'
+  import {confirmAlertController} from "@/helpers/alertController";
 
 
   const $router = useRouter()
@@ -107,52 +109,54 @@
   })
 
   const add = async () => {
-    if (tanks.value.length === 0) {
-      try {
-        const query_1 = `INSERT INTO tank_table VALUES('${tankProperties.value.name}',
-        ${tankProperties.value.number},${tankProperties.value.parcel},'${tankProperties.value.cargo}',
-        ${tankProperties.value.capacity},${tankProperties.value.fullness},
-        ${(goodDensity.value)  * tankProperties.value.capacity }, ${goodDensity.value},'${tankProperties.value.tankGroup}')`
-
-        await db.execute(query_1,false)
-        await presentToast();
-        await $router.replace({name: 'Management'})
-        return true
-
-      } catch (e) {
-        alert('Tank eklenirken hata oluştu')
-        console.log(e)
-      }
-    } else {
-      for (let i = 0; i < tanks.value.length; i++){
-
-        if (tanks.value[i].tankName === tankProperties.value.name || String(tanks.value[i].tankNumber) === String(tankProperties.value.number)) {
-          canBeAdded.value = false;
-          await presentAlert();
-          return false;
-        } else {
-          canBeAdded.value = true;
-        }
-      }
-      if (canBeAdded.value) {
+    const newWeight = tankProperties.value.capacity * goodDensity.value
+    if ( await groupDifference(newWeight, tankProperties.value.tankGroup)) {
+      if (tanks.value.length === 0) {
         try {
           const query_1 = `INSERT INTO tank_table VALUES('${tankProperties.value.name}',
         ${tankProperties.value.number},${tankProperties.value.parcel},'${tankProperties.value.cargo}',
         ${tankProperties.value.capacity},${tankProperties.value.fullness},
-        ${(goodDensity.value)  * tankProperties.value.capacity },${goodDensity.value},'${tankProperties.value.tankGroup}')`
+        ${(goodDensity.value)  * tankProperties.value.capacity }, ${goodDensity.value},'${tankProperties.value.tankGroup}')`
 
           await db.execute(query_1,false)
-          canBeAdded.value = false
           await presentToast();
-          await $router.replace({name:'Management'})
+          await $router.replace({name: 'Management'})
+          return true
 
         } catch (e) {
           alert('Tank eklenirken hata oluştu')
           console.log(e)
         }
+      } else {
+        for (let i = 0; i < tanks.value.length; i++){
+
+          if (tanks.value[i].tankName === tankProperties.value.name || String(tanks.value[i].tankNumber) === String(tankProperties.value.number)) {
+            canBeAdded.value = false;
+            await presentAlert();
+            return false;
+          } else {
+            canBeAdded.value = true;
+          }
+        }
+        if (canBeAdded.value) {
+          try {
+            const query_1 = `INSERT INTO tank_table VALUES('${tankProperties.value.name}',
+        ${tankProperties.value.number},${tankProperties.value.parcel},'${tankProperties.value.cargo}',
+        ${tankProperties.value.capacity},${tankProperties.value.fullness},
+        ${(goodDensity.value)  * tankProperties.value.capacity },${goodDensity.value},'${tankProperties.value.tankGroup}')`
+
+            await db.execute(query_1,false)
+            canBeAdded.value = false
+            await presentToast();
+            await $router.replace({name:'Management'})
+
+          } catch (e) {
+            alert('Tank eklenirken hata oluştu')
+            console.log(e)
+          }
+        }
       }
     }
-
   }
 
 
