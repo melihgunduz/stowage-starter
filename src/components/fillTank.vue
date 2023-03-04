@@ -23,7 +23,7 @@
   import { onMounted, ref} from "vue";
   import {useRouter} from "vue-router";
   import {confirmAlertController} from "@/helpers/alertController";
-  import { setGroupsWeight, groupDifference} from "@/helpers/groupWeightController"
+  import { groupDifference} from "@/helpers/groupWeightController"
 
   let filledVolume = 0
   let newFullVolume = 0

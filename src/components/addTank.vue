@@ -21,7 +21,6 @@
   import {createConn, db, getTanks} from '@/helpers/dataBaseFunctions'
   import {useRouter} from "vue-router";
   import {groupDifference} from '@/helpers/groupWeightController.js'
-  import {confirmAlertController} from "@/helpers/alertController";
 
 
   const $router = useRouter()
