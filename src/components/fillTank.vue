@@ -127,7 +127,7 @@
   onMounted(async () => {
     await createConn()
     await getTanks().then((val) => {
-      tanks.value = val
+      tanks.value = val.filter((i) => i.fullness < 98)
     })
     await groupDifference();
 
@@ -177,7 +177,7 @@
         <div id="right">
           <ion-text>Doluluk: <ion-text color="success">{{ (selectedTank.fullness).toFixed(2) }}%</ion-text></ion-text>
           <ion-text>Dolu Hacim: <ion-text color="success">{{filledVolume}} m3</ion-text></ion-text>
-          <ion-text>Doldurulabilir Hacim: <ion-text color="success">{{((selectedTank.capacity*98/100) - filledVolume).toFixed(2)}} m3</ion-text></ion-text>
+          <ion-text>Doldurulabilir Hacim: <ion-text color="success">{{canBeFilledVolume}} m3</ion-text></ion-text>
         </div>
       </ion-card-content>
       <ion-card-content v-else>
