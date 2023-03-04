@@ -132,7 +132,6 @@
     await groupDifference();
 
   })
-  // TODO: tank maksimum kapasitede yüklenmiş ise yükleme yapılamayacak
 </script>
 
 <template>

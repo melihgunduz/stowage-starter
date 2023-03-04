@@ -6,7 +6,17 @@
 
 
   const refreshActive= ref(true)
-  const tanks = ref([{
+  const groupSTanks = ref([{
+    tankName : null,
+    tankNumber : null,
+    parcelNumber : null,
+    cargo: null,
+    capacity: NaN,
+    fullness: NaN,
+    weight:NaN,
+    goodDensity: NaN,
+  }])
+  const groupPTanks = ref([{
     tankName : null,
     tankNumber : null,
     parcelNumber : null,
@@ -27,7 +37,8 @@
       const test = await db.query(query) //use db.query when use SELECT
       const jso = JSON.stringify(test)
       const obj = JSON.parse(jso)
-      tanks.value = obj.values
+      groupSTanks.value = obj.values.filter((i:any) => i.tankGroup === 'S')
+      groupPTanks.value = obj.values.filter((i:any) => i.tankGroup === 'P')
 
     } catch (e) {
       alert('error getting table')
@@ -53,7 +64,7 @@
 
 <template>
 <ion-page>
-  <ion-header :translucent="true">
+  <ion-header :translucent="true" >
     <ion-toolbar>
       <ion-title>Home Page</ion-title>
       <ion-buttons slot="end">
@@ -62,10 +73,9 @@
         </ion-button>
       </ion-buttons>
     </ion-toolbar>
-
   </ion-header>
 
-  <ion-content :fullscreen="true" v-if="tanks.length > 0">
+  <ion-content :fullscreen="true" v-if="groupPTanks.length ||groupSTanks.length > 0">
     <ion-refresher slot="fixed" @ionRefresh="refreshData($event)" >
       <ion-refresher-content
           refreshing-spinner="circles"
@@ -74,34 +84,69 @@
     </ion-refresher>
     <ion-grid :fixed="true">
       <ion-row>
-        <ion-col v-for="tank in tanks" :key="tank" size="6">
-          <ion-card color="primary" class="ion-padding-vertical">
-            <ion-card-header class="ion-no-padding ion-padding-horizontal">
-              <ion-card-title>
-                Tank No: {{ tank.tankNumber }}
-              </ion-card-title>
-              <ion-card-subtitle>
-               Tank Adı: {{ tank.tankName }}
-              </ion-card-subtitle>
-            </ion-card-header>
-            <ion-card-content class="ion-padding-horizontal">
-              <ion-text>
-                Yük: <ion-text class="data-text">{{ tank.cargo }}</ion-text>
-              </ion-text>
-              <ion-text>
-                Doluluk: <ion-text class="data-text">{{ tank.fullness }}%</ion-text>
-              </ion-text>
-              <ion-text>
-                Hacim: <ion-text class="data-text">{{ tank.capacity }} m3</ion-text>
-              </ion-text>
-              <ion-text>
-                Dolu Hacim: <ion-text class="data-text">{{ (tank.weight / tank.goodDensity).toFixed(2) }} m3</ion-text>
-              </ion-text>
-              <ion-text>
-                Ağırlık: <ion-text class="data-text">{{ (tank.weight).toFixed(2) }} kg</ion-text>
-              </ion-text>
-            </ion-card-content>
-          </ion-card>
+        <ion-col size="6">
+
+          <ion-row v-for="tank in groupSTanks" :key="tank">
+            <ion-card color="primary" class="ion-padding-vertical">
+              <ion-card-header class="ion-no-padding ion-padding-horizontal">
+                <ion-card-title>
+                  Tank No: {{ tank.tankNumber }}
+                </ion-card-title>
+                <ion-card-subtitle>
+                  Tank Adı: {{ tank.tankName }}
+                </ion-card-subtitle>
+              </ion-card-header>
+              <ion-card-content class="ion-padding-horizontal">
+                <ion-text>
+                  Yük: <ion-text class="data-text">{{ tank.cargo }}</ion-text>
+                </ion-text>
+                <ion-text>
+                  Doluluk: <ion-text class="data-text">{{ tank.fullness }}%</ion-text>
+                </ion-text>
+                <ion-text>
+                  Hacim: <ion-text class="data-text">{{ tank.capacity }} m3</ion-text>
+                </ion-text>
+                <ion-text>
+                  Dolu Hacim: <ion-text class="data-text">{{ (tank.weight / tank.goodDensity).toFixed(2) }} m3</ion-text>
+                </ion-text>
+                <ion-text>
+                  Ağırlık: <ion-text class="data-text">{{ (tank.weight).toFixed(2) }} kg</ion-text>
+                </ion-text>
+              </ion-card-content>
+            </ion-card>
+          </ion-row>
+        </ion-col>
+        <ion-col size="6">
+          <ion-row  v-for="tank in groupPTanks" :key="tank">
+            <ion-card color="secondary" class="ion-padding-vertical">
+              <ion-card-header class="ion-no-padding ion-padding-horizontal">
+                <ion-card-title>
+                  Tank No: {{ tank.tankNumber }}
+                </ion-card-title>
+                <ion-card-subtitle>
+                  Tank Adı: {{ tank.tankName }}
+                </ion-card-subtitle>
+              </ion-card-header>
+              <ion-card-content class="ion-padding-horizontal">
+                <ion-text>
+                  Yük: <ion-text class="data-text">{{ tank.cargo }}</ion-text>
+                </ion-text>
+                <ion-text>
+                  Doluluk: <ion-text class="data-text">{{ tank.fullness }}%</ion-text>
+                </ion-text>
+                <ion-text>
+                  Hacim: <ion-text class="data-text">{{ tank.capacity }} m3</ion-text>
+                </ion-text>
+                <ion-text>
+                  Dolu Hacim: <ion-text class="data-text">{{ (tank.weight / tank.goodDensity).toFixed(2) }} m3</ion-text>
+                </ion-text>
+                <ion-text>
+                  Ağırlık: <ion-text class="data-text">{{ (tank.weight).toFixed(2) }} kg</ion-text>
+                </ion-text>
+              </ion-card-content>
+            </ion-card>
+          </ion-row>
+
         </ion-col>
       </ion-row>
     </ion-grid>
